@@ -1169,7 +1169,7 @@ Now, As we have three different ways to declare a variable using let, var and co
 
 Try to put all declaration and initialisation on top of scope. This will minimise unexpected errors when logic get called.
 
-### Ep.9 BLOCK SCOPE & Shadowing in JS
+### Ep. 9 BLOCK SCOPE & Shadowing in JS
 
 #### What is Block ?
 
