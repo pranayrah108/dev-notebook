@@ -962,3 +962,662 @@ So, this whole mechanism of searching b in local memory and if not found then in
 ![Ep7 Image 12](assets/Ep7image12.webp)
 
 _Note: You can see “Closure” keyword in above screenshot. It’ll be covered in future articles._
+
+### Ep. 8 let & const in JS Temporal Dead Zone 🧐
+
+Prerequisite:
+1.Hoisting in javaScript
+2.“this” keyword in JS
+
+#### In this article, we’ll cover : :
+
+1. What is Temporal Dead Zone?
+2. Are let and const declaration hoisted?
+3. Difference between Syntax Error / Reference Error and Type Error?
+
+#### Are let and const declaration hoisted?
+
+Answer is : **YES** 👍🏼
+
+But they are hoisted very differently then var declarations.
+In interviews, you can say that these are in Temporal Dead Zone.
+
+Let’s understand taking an example:
+
+```js
+let a = 10;
+var b = 100;
+```
+
+In previous hoisting article, we learn that we can access variable “b” even before we have initialised it. Like below
+
+```js
+console.log(b);
+let a = 10;
+var b = 100;
+```
+
+**_Reason_**: Because in JS, memory has been allocated even before any line of code is executed. So, we can access variable “b” even before initialising or declaring.
+
+Output :
+
+![Ep8 Image 1](assets/Ep8image1.webp)
+
+#### Question: What If I try to access variable “a” in same way ? As it is hoisted , Will it give undefined too?
+
+Answer is **NO** 👎🏼
+
+```js
+console.log(a);
+let a = 10;
+var b = 100;
+```
+
+Output:
+
+![Ep8 Image 2](assets/Ep8image2.webp)
+
+SO, it is saying **_“Reference Error: Cannot access ‘a’ before initialisation”_** . i.e you can access “a” only after you assigned or initialised some value to “a”.
+
+Let’s try below code:
+
+```js
+let a = 10;
+console.log(a);
+var b = 100;
+```
+
+Output:
+
+![Ep8 Image 3](assets/Ep8image3.webp)
+
+Now, you can see we were able to access “a”. console prints value 10.
+
+#### Question: How to know whether any variable is hoisted or not??
+
+Let’s see that in browser, add a debugger:
+
+![Ep8 Image 4](assets/Ep8image4.webp)
+
+Now, If you see both variables “a” and “b” are in scope with value **undefined** but **“a” is under “script” where “b” is in Global memory space.**
+
+To summarise: **“let”** and **“const”** type variables will be allocated memory but that is not in Global Space. They are hoisted but not stored in global space. And this memory is not accessible until you put some value into that.
+
+#### Question: What is Temporal Dead Zone??
+
+It is the time since when let variable was hoisted and till it is initialised some value.
+
+So, _whenever you try to access any let or const variable in Temporal Dead Zone, it gives you_ **_Reference Error._**
+
+```js
+console.log(a);
+let a = 10;
+console.log(a);
+var b = 100;
+```
+
+So, In above example, until Line 2 : let a = 10; . **_“a” is in Temporal Dead Zone and gives you Reference Error at Line 1._**
+After Line 2, at Line 3: you can access variable a.
+
+#### In previous article of “this” keyword in JS, we tried to access variables using “this” and “window” keywords. Let’s just try that too.
+
+![Ep8 Image 5](assets/Ep8image5.webp)
+
+As you can see above, **_we are not able to access “a” using “window” and “this” keyword. It keeps giving “undefined”._**
+
+Reason: “this” and “window” represents global space and memory allocated to “a” was different then global object. So, this shows, **_“let” is strict then “var”._**
+
+#### Question: Can we re-declare “let” variable?
+
+Answer is **NO** 👎🏼
+
+```js
+let a = 10;
+let a = 100;
+```
+
+Output:
+
+![Ep8 Image 6](assets/Ep8image6.webp)
+
+SO, it is saying **_“Syntax Error: Identifier ‘a’ has already been declared”_** .
+
+Also, JS will not run any line of code if it sees redeclaration. It will not reach any line of code.
+
+#### what If I try below ?
+
+```js
+let a = 10;
+var a = 100;
+```
+
+![Ep8 Image 7](assets/Ep8image7.webp)
+
+Same again: **_“Syntax Error: Identifier ‘a’ has already been declared” . “let” variable can’t be declared again with same name again in same scope._**
+
+#### Question: Can we re-declare “var” variable?
+
+Answer is **YES** 👍🏼
+
+```js
+var a = 10;
+var a = 100;
+```
+
+No error when you run code.
+
+#### Question: Can we re-declare “const” variable?
+
+Answer is **NO** 👎🏼
+
+```js
+var a = 10;
+const b = 100;
+const b = 1000;
+```
+
+Output:
+
+![Ep8 Image 8](assets/Ep8image8.webp)
+
+“const” variable can’t be declared again with same name in same scope.
+
+#### What If I run below code?
+
+```js
+let a;
+const b;
+var c;
+
+a = 10;
+b = 100;
+c = 1000;
+
+```
+
+![Ep8 Image 9](assets/Ep8image9.webp)
+
+SO, it is saying **_“Syntax Error: Missing Initializer in const declaration.” This means “const” variable needs to be intialised and declared in same line._**
+
+_“const needs to be initialised and declared in same line”_
+
+#### What If I try to assign some value again to “const” variable?
+
+```js
+let a = 10;
+const b = 100;
+
+a = 20;
+b = 200;
+```
+
+![Ep8 Image 10](assets/Ep8image10.webp)
+
+SO, it is saying **_“Type Error: Assignment to constant variable.” You can not assign value again to “const” type variable._**
+
+Now, As we have three different ways to declare a variable using let, var and const.
+
+#### Which one we should use?
+
+1. const : whenever you put some value which is not going to change later, use const.
+
+2. let: As let has Temporal dead zone and you won’t run into unexpected errors.
+
+3. var: Try to put it aside and not use.
+
+#### How to avoid Temporal Dead Zone errors?
+
+Try to put all declaration and initialisation on top of scope. This will minimise unexpected errors when logic get called.
+
+### Ep.9 BLOCK SCOPE & Shadowing in JS
+
+#### What is Block ?
+
+1. Block is defined by curly braces i.e { .. }
+
+2. Block is also know as **Compound Statement.**
+
+#### Why Block is required in JS?
+
+Block is used to combine multiple javascript statements into one group.
+
+#### Why we need to group multiple statements at one place?
+
+we group multiple statements in a block so that we can use it where JS expects one statement
+
+Example: if statement only expecting one statement but we provided multiple statements using curly braces. This is a Block.
+
+```js
+if (true) {
+  // Compound Statement
+  var a = 10;
+  console.log(a);
+}
+```
+
+#### What is Block Scoped?
+
+Block Scoped means what all variables and functions we can access inside block.
+
+To understand in details, let’s take an example and run it:
+
+```js
+{
+  var a = 10;
+  let b = 20;
+  const c = 30;
+}
+```
+
+![Ep9 Image 1](assets/Ep9image1.webp)
+
+So, “b” and “c” are inside Block Scope which is separate space which is reserved for block only. But “a” is hoisted inside global object.
+From here the statement comes in picture that:
+
+`let` and `const` are block scoped.
+
+Therefore, you can’t access `let` and `const` type variable outside the scope .
+
+Therefore, you can’t access `let` and `const` type variable outside the scope .
+
+```js
+{
+  var a = 10;
+  let b = 20;
+  const c = 30;
+  console.log("Inside Block a= ", a);
+  console.log("Inside Block b= ", b);
+  console.log("Inside Block c= ", c);
+}
+console.log("Outside Block a= ", a);
+console.log("Outside Block b= ", b);
+console.log("Outside Block c= ", c);
+```
+
+![Ep9 Image 2](assets/Ep9image2.webp)
+
+So, it is saying **_“Reference Error: b is not defined” . Because “b” is not in global scope._**
+
+![Ep9 Image 3](assets/Ep9image3.webp)
+
+#### What is Shadowing in JS?
+
+If we have same named variable outside the block, then block variable will shadowed outside block variable.
+
+Example:
+
+```js
+var a = 12;
+{
+  var a = 10;
+  let b = 20;
+  const c = 30;
+  console.log("Inside Block a= ", a);
+  console.log("Inside Block b= ", b);
+  console.log("Inside Block c= ", c);
+}
+```
+
+#### What will log print for “a” now?
+
+Output:
+
+![Ep9 Image 4](assets/Ep9image4.webp)
+
+It prints 10. That means line 3 variable shadowed Line 1 variable.
+
+#### \* What If I try to print var “a” outside block ? What should it print 10 or 12?
+
+```js
+var a = 12;
+{
+  var a = 10;
+  let b = 20;
+  const c = 30;
+  console.log("Inside Block a= ", a);
+  console.log("Inside Block b= ", b);
+  console.log("Inside Block c= ", c);
+}
+console.log("Outside Block a= ", a);
+```
+
+Output:
+
+![Ep9 Image 5](assets/Ep9image5.webp)
+
+So , it prints 10 again. Line number 3 shadowed line 1 and also modified the value for variable. **_Because they both are pointing to same memory location._**
+
+#### \* Now what happens with “let” type variable?
+
+```js
+let b = 12;
+{
+  var a = 10;
+  let b = 20;
+  const c = 30;
+  console.log("Inside Block a= ", a);
+  console.log("Inside Block b= ", b);
+  console.log("Inside Block c= ", c);
+}
+console.log("Outside Block b= ", b);
+```
+
+Output:
+
+![Ep9 Image 6](assets/Ep9image6.webp)
+
+Now, Inside block variable “b” prints 20 but outside block , it prints 12.
+Because scopes are different in case of let type variable. Try adding debugger and check scope of variables.
+
+![Ep9 Image 7](assets/Ep9image7.webp)
+
+**_In above screenshot, you can see three scopes ::::_**
+
+**_1. Global: memory reserved for var_**
+
+**_2. Script: separate memory forletand const outside block scope_**
+
+**_3. Block: separate memory for variables inside scope_**
+
+#### \* Now what happens with “const” type variable?
+
+```js
+const c = 12;
+{
+  var a = 10;
+  let b = 20;
+  const c = 30;
+  console.log("Inside Block a= ", a);
+  console.log("Inside Block b= ", b);
+  console.log("Inside Block c= ", c);
+}
+console.log("Outside Block c= ", c);
+```
+
+Output:
+
+![Ep9 Image 8](assets/Ep9image8.webp)
+
+Now, Inside block variable “c” prints 30 but outside block , it prints 12.
+Because scopes are different in case of const type variable. Try adding debugger and check scope of variables.
+
+![Ep9 Image 9](assets/Ep9image9.webp)
+
+Again, in above screenshot, we can see 3 scopes.
+
+#### Does Shadowing behaves same way in functions?
+
+```js
+const c = 12;
+
+function a() {
+  const c = 30;
+  console.log("Inside Function c= ", c);
+}
+
+a();
+
+console.log("Outside Function c= ", c);
+```
+
+Output:
+
+![Ep9 Image 10](assets/Ep9image10.webp)
+
+Now, Inside function variable “c” prints 30 but outside function, it prints 12.
+Because scopes are different in case of `const` type variable. Try adding debugger and check scope of variables.
+
+![Ep9 Image 11](assets/Ep9image11.webp)
+
+#### What is Illegal shadowing?
+
+#### Case 1: If outside block variable is “let” and inside is “var” type? Will it still gives error?
+
+```js
+let a = 20;
+{
+  var a = 10;
+}
+```
+
+Can we do this? What will be the output now?
+
+![Ep9 Image 12](assets/Ep9image12.webp)
+
+So, this is known as Illegal Shadowing.
+
+#### Case 2: But what If outside block variable is “var” and inside is “let” type? Will it still gives error?
+
+```js
+var a = 20;
+{
+  let a = 10;
+}
+console.log(a);
+```
+
+Answer is **NO** .It won’t give any error and work perfectly fine.
+
+#### WHY?
+
+Because if a variable is shadowing something, it should not cross the boundary of it’s scope.
+
+In Case 1: `var` is not blocked scope. **_“var” is function scoped. So you can do it inside a function._**
+
+```js
+let a = 20;
+function b() {
+  var a = 10;
+}
+b();
+```
+
+Now, in this case, `var a` is not interfering with `let a` as both have different memory.
+
+#### Now, Try below on your own, add debugger and see how scopes work:
+
+Case 1:
+
+```js
+const a = 20;
+{
+  const a = 30;
+  console.log("Inside Block 1, a = ", a);
+  {
+    const a = 40;
+    console.log("Inside Block 2, a = ", a);
+  }
+}
+console.log("Outside Block, a = ", a);
+```
+
+Case 2:
+
+```js
+const a = 20;
+{
+  const a = 30;
+  console.log("Inside Block 1, a = ", a);
+  {
+    console.log("Inside Block 2, a = ", a);
+  }
+}
+console.log("Outside Block, a = ", a);
+```
+
+**_These examples also cover Lexical Scope Chain pattern we covered in previous article._**
+
+With this, we cover our basics for Block Scope, Function Scope and Shadowing.
+
+### Ep10. Closures in JS 🤷🏻‍♀️
+
+Let’s start with an example
+
+```js
+function x() {
+  var a = 10;
+  function y() {
+    console.log(a);
+  }
+  y();
+}
+x();
+```
+
+Because of JS lexical scope concept, so when `y()` function is invoked and executed, it ‘ll try to find `a` inside local memory scope. If not found there, then it goes to **_Lexical Parent_** and search there.
+
+#### What should be the output?
+
+![Ep10 Image 1](assets/Ep10image1.webp)
+
+Let’s put debugger and check what is happening in background:
+
+![Ep10 Image 2](assets/Ep10image2.webp)
+
+**_Closure_** _means that a function bind together with its lexical environment or you can say_ **“function along with it’s lexical scope”**
+
+#### Why it says Closure (x) in above screenshot?
+
+We hold program on to _`y()` at line `4` so inside `y()` , it forms closure with the variable `a` which was part of function `x()` lexical scope._
+
+Or you can say, function _`y()` is bind to variable of function `x()` . So , it forms a closure and it has access to it’s parent lexical scope._
+
+Let’s take another example:
+
+```js
+function x() {
+  var a = 10;
+  function y() {
+    console.log(a);
+  }
+  return y;
+}
+var z = x();
+console.log(z);
+```
+
+_Closures come into picture when you try to return these functions outside._
+
+Output:
+
+![Ep10 Image 3](assets/Ep10image3.webp)
+
+So, as you can see function `y()`is returned in to `variable z` now.
+
+At Line 8, function `x()`is gone from memory space, completely vanish and no longer in call stack.
+
+So, now `variable z` contains `function y()`.
+
+#### Question: As function y( ) is returned and no longer reside inside function x( ). How will this behave in other lexical scope?
+
+Let’s try calling function `z()`. See below:
+
+```js
+function x() {
+  var a = 10;
+  function y() {
+    console.log(a);
+  }
+  return y;
+}
+var z = x();
+console.log(z);
+z(); // call function here
+```
+
+As function `y()` is trying print variable a but variable a is not in global scope and function `x()` is not in call stack anymore. **_What will happen to variable a? What will invoking function `z()` will print now?_**
+
+Output:
+
+![Ep10 Image 4](assets/Ep10image4.webp)
+
+As you can see, **_it printed 10._**
+
+Here comes **concept of closure**, When a function is returned from another function, they still maintains their Lexical Scope. They remember where they were actually present.
+
+We can say when function `y()` was returned, not only function code was returned but closure was returned.
+
+That closure enclosed function along with Lexical scope is returned.
+
+#### Let’s take another example:
+
+```js
+function x() {
+  var a = 10;
+  function y() {
+    console.log(a);
+  }
+  a = 100;
+  return y;
+}
+var z = x();
+console.log(z);
+z();
+```
+
+What should be output now?
+
+![Ep10 Image 5](assets/Ep10image5.webp)
+
+![Ep10 Image 6](assets/Ep10image6.webp)
+
+Because **_console.log(a) doesn’t refers 10. It is reference to the variable not the value. So, reference to variable persist._**
+
+So, now variable a’s reference points to 100 . That means 100 is still in memory preserved because of closure. When function `x()` was gone , it is not garbage collected, because it has to be used later. That’s why 100 printed not 10.
+
+#### Let’s take another example again :
+
+```js
+function z() {
+  var b = 20;
+  function x() {
+    var a = 10;
+    function y() {
+      console.log(a, b);
+    }
+    y(); // call function here
+  }
+  x(); // call function here
+}
+
+z(); // call outer function here
+```
+
+Run it and add debugger in browser:
+
+![Ep10 Image 7](assets/Ep10image7.webp)
+
+As you can see in above, there are two closures : Closure (x) and Closure (z).
+
+Closure (x) => for parent
+Closure (z) => For parent’s parent
+
+So, if `y()` is being returned anywhere then value of `variable a` and `variable b` are not garbage collected.
+
+_So, Because of Closures, as these functions remember things even when they are not in their lexical scope, this makes JS language very powerful._
+
+**Few Common usage of Closures are :**
+
+1. Module Design Patterns
+
+2. Currying
+
+3. Function Like once
+
+4. memoize
+
+5. maintaining state in async world
+
+6. setTimeouts
+
+7. Iterators
+
+8. Data Hiding and Encapsulation
+
+#### Disadvantages of Closures:
+
+1. There could be over consumption of memory because every time a closure is formed, it consumes a lot of memory.
+
+2. Those closed over variables are not Garbage Collected, so it means it is accumulating a lot of memory
+
+3. If not handled properly, it can lead to memory leaks.
