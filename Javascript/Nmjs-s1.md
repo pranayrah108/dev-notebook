@@ -412,3 +412,326 @@ you can see, only in case of proper function, it will copy the whole code and ot
 ![Hoisting Output Dev Tool 6](assets/HostingOutputDevTool6.webp)
 
 I hope this article provides a clear understands of how Hoisting works in JavaScript. Happy Coding.
+
+### Ep. 4: How functions work in JS ❤ & Variable Environment
+
+Let’s take **function a()** and **function b()** which have variable with name x but different values. From here, **_we’ll learn how function invocation work behind the scenes._**
+
+Also, introduce something in global space. Let take x with different value at top of program.
+Then invoke functions : a and b.
+
+_From last articles, you must remember that these functions can be invoked before even initialising that because of hoisting._
+
+```js
+var x = 1;
+a();
+b();
+console.log(x);
+
+function a() {
+  var x = 10;
+  console.log(x);
+}
+
+function b() {
+  var x = 100;
+  console.log(x);
+}
+```
+
+**Response:**
+
+![Ep4 Output 1](assets/Ep4output1.webp)
+
+Let’s see how this program works behind the scene in javascript line by line. 🤔🤔
+
+Everything we learn in this articles helps in understanding scope, closures
+
+Steps:
+
+When Javascript runs any program, **Global Execution Context(GEC)** is created. It will have two components : **Memory Component(Variable Environment) and Code Component.**
+
+1. Memory will be allocated to all variables and functions present i.e **x, a() and b()**.
+
+2. CallStack will be created and GEC will be pushed inside it.
+
+![Ep4 Image 1](assets/Ep4img1.webp)
+
+3. Now when code actually get executed that means
+
+```html
+var x = 1;
+```
+
+then **_1 will replace undefined_** in memory
+
+![Ep4 Image 2](assets/Ep4img2.webp)
+
+4. When **function a()** is invoked, then a **_new execution context_** is created which is limited to this function only. It will follow same phase as above i.e two components: memory and code where x will be all together different variable.
+
+```js
+function a() {
+  var x = 10;
+  console.log(x);
+}
+```
+
+5. As soon as this new execution context get created for a(), it get pushed into call stack.
+
+6. Now control is at Line 7.
+
+7. At line 7 , 10 will replace undefined for x in memory
+
+8. At Line 8, **_console will print 10 not 1 as it will look into local memory space_**
+
+![Ep4 Image 3](assets/Ep4img3.webp)
+
+9. At line 9, We finish executing function a(), so now whole execution context for a will be deleted. **_a() will be popped out from call stack_**
+
+![Ep4 Image 4](assets/Ep4img4.webp)
+
+10. Now GEC is at line 2 again and control moves to line 3
+
+![Ep4 Image 5](assets/Ep4img5.webp)
+
+11. Again is a function b() is invoked and executes same as above, creating memory and code components. As soon as new execution context get created for b(), it get pushed into call stack.
+
+Now control is at Line 12.
+
+At line 12, 100 will replace undefined for x in memory.
+
+At Line 12, **_console will print 100 not 1 as it will look into local memory space_**
+
+![Ep4 Image 6](assets/Ep4img6.webp)
+
+12. At line 12, We finish executing function b(), so now whole execution context for a will be deleted.
+
+![Ep4 Image 7](assets/Ep4img7.webp)
+
+13. **_b() will be popped out from call stack_**
+
+![Ep4 Image 8](assets/Ep4img8.webp)
+
+14. Now GEC is at line 3 again and control moves to line 4. It will look for x in local memory of this particular execution context. **_And it prints 1 in console_**.
+
+![Ep4 Image 9](assets/Ep4img9.webp)
+
+15. After finish executing line 4 in GEC. Now, JS engine moves to next line and see there is nothing left to execute.
+
+16. GEC will be deleted and GEC will be popped out from call stack.
+
+![Ep4 Image 10](assets/Ep4img10.webp)
+
+### This is how complete program get executed. 🎉
+
+You can also check same in browser as well by adding breakpoints 🛑.
+
+### Ep. 5: SHORTEST JS Program window & this keyword 🧐
+
+Let’s just take an **empty JS file\*** where nothing to execute and see what happens behind the scenes.
+
+1. Go to Source
+2. Put debugger on and run program👩🏻‍💻
+3. GEC will be created and JS engine still created GEC and set up memory space
+4. There was nothing to setup as file was empty but it still did it’s job .🤷🏻‍♀️
+
+![Ep5 Image 1](assets/Ep5image1.webp)
+
+### Now comes new word “window” 🪟. What is that??
+
+## When you go to console and type window, you’ll see something printed, a big object which consist functions and variable which are created by JS engine, in global space .
+
+![Ep5 Image 2](assets/Ep5image2.webp)
+
+This means you can access all these functions and variables anywhere in JS program
+
+Same as above JS engine creates **_this_** 👈🏻 keyword
+
+Try typing **_“this”_** in console and you’ll see something will get printed.
+
+![Ep5 Image 3](assets/Ep5image3.webp)
+
+## Right now, “this” represents “window” in global space.👏🏼
+
+### So, question here is what exactly is window? How to define that?
+
+## window is a global object which is created along with GEC.
+
+So, to **summaries** whenever a JS program runs:
+
+1. GEC is created
+2. global object is created i.e window
+3. this variable is created and points to global object
+
+#### Why it is called “window” ?
+
+JS not just run on browsers, it runs on server and others. So, wherever JS is running there must be JS engine . Like in chrome, it’s V8, firefox and safari have their own engines. So, all these JS engines have responsibility to create global object. In case of browsers, it is known as “window”. It’ll be different for node or wherever JS is running but there will always be global object.
+
+#### So, at global level in GEC this === window. 😃
+
+![Ep5 Image 4](assets/Ep5image4.webp)
+
+#### Now, you might have question: what is global space?🤔
+
+Any code you write inside JS which is not inside a function is in global space.
+
+Let see below example where we have variable **“y”** and **“function z()”**.
+
+![Ep5 Image 5](assets/Ep5image5.webp)
+
+So, **“y” and function z()** is in global space. It will get attached to global object i.e window. But variable a inside **function z()** will not be in global object.
+
+![Ep5 Image 6](assets/Ep5image6.webp)
+
+#### Now, how to access these?🧐
+
+1. use **window.{variableName}**
+
+2. directly use {**variableName**}
+
+3. use **this.{variableName}**
+
+![Ep5 Image 7](assets/Ep5image7.webp)
+
+Note: Whenever we try to access any function or variable and we don’t put anything in front of it, it automatically assumes you are referring to global space.
+
+so, all these referring to same place in memory space.
+
+```js
+(window.y === y) === this.y;
+```
+
+#### Summary
+
+So now you can figure out the value of `this` by following these simple rules:
+
+- By default, `this` refers to a global object, which is global in the case of NodeJS and a `window` object in the case of a browser
+
+- When a method is called as a property of an object, then this refers to the parent object
+
+Note: \* **empty JS file — Shortest JS program.**
+
+### Ep. 6: undefined vs not defined in JS 🤨
+
+**_undefined_** is a very special keyword in javascript and it is not there in other languages. It has a lot to do with how javascript code is executed.
+
+_As we have studied in the previous articles also that javascript code is executed in a different way it creates a global execution context and allocates memory to all the variables and functions even before a single line of code is executed._
+
+#### Code Example of undefined in JS
+
+Suppose we created a variable a = 10, so even before this line of code is executed, javascript has tried to allocate memory to this even before this line of code is run.
+
+Let us see with the help of debugger so i am putting the debugger right before this line is executed.
+If we refresh the page this, line hasn’t been executed yet right but javascript has already allocated memory to this **“a”** .
+
+![Ep6 Image 1](assets/Ep6image1.webp)
+
+so we have already reserved memory for now. If we see here is the reserved memory so right now **_a is undefined_**.
+
+#### Why this happened?
+
+When it allocates memory to all the variables and functions, to the variables it tries to put a placeholder, it is like a placeholder which is placed in the memory. That special keyword is **_undefined_**
+
+**_“undefined”_** _is very different than_ **_“not defined”._**
+
+So suppose if i try to access something else like below to which we have not allocated memory.
+
+```js
+var a = 10;
+
+console.log(x);
+```
+
+#### what will happen ?
+
+“x” you won’t find anything that is known as **_“not defined ”_** 👈🏼
+
+![Ep6 Image 2](assets/Ep6image2.webp)
+
+If you run below code, First it will give a = undefined
+
+```js
+console.log("a = ", a);
+var a = 10;
+console.log("a = ", a);
+console.log("x = ", x);
+```
+
+But after second line has been executed, you will see that the **value of a has changed to 10** .
+
+![Ep6 Image 3](assets/Ep6image3.webp)
+
+_So remember undefined is not equal to empty_
+
+**_Some people 👥 think that undefined means empty_** _like it is not taking up any memory space._ 🤨 ❌
+
+#### No, undefined is a special keyword it takes up its own memory but you can assume it to be like a placeholder which is kept for the time being until the variable is assigned some other value. 🤷🏻‍♀️
+
+#### What if i never put any value inside “a” , like what if I just declared it? 🧐
+
+I never put any value to it throughout our whole program. It have this value undefined that placeholder kept inside and to show you that it is something in javascript.
+
+![Ep6 Image 4](assets/Ep6image4.webp)
+
+#### Mistake you should not make while using undefined.
+
+**a = undefined** ❌ ❌
+
+#### what does that mean?
+
+undefined is a value, it is a keyword in javascript and it is totally possible to assign and define to any variable but it is kind of a mistake and it is a bad thing to do in javascript.
+
+One should not do it because undefined is like a placeholder which is kept inside the variables and it states that in the whole code that variable was not assigned anything right so it is meant for a specific purpose so it is not generally a good way to put undefined like this
+
+Though it is a totally okay to do this but it can lead to a lot of inconsistencies so it is not a good practice to do this.
+
+**_Javascript is a loosely typed language. What does that mean?? 🫤_**
+
+#### So loosely typed means that it does not attaches its variables to any specific data type.
+
+Suppose if i created a and put in string in it so later on in the program i can also put numbers in it, i can also put boolean in it.
+
+![Ep6 Image 5](assets/Ep6image5.webp)
+
+### It is like javascript is very flexible in this case, it is loosely typed that is known as loosely type language.
+
+If it was strict type then just like other languages just like **C** or **C++** .
+
+If you assign a variable that if it is a string a so it will only hold string, it won’t hold numbers or booleans or anything else but it is not the case in **javascript** you can put anything and everything inside this variable.
+
+So if i do **var a** for the time being it can like just hold undefined
+
+```js
+var a;
+console.log("Step 1,  a = ", a);
+```
+
+![Ep6 Image 6](assets/Ep6image6.webp)
+
+If i later on put **a = 10** here so it can hold numbers also
+
+```js
+var a;
+console.log("Step 1,  a = ", a);
+a = 10;
+console.log("Step 2,  a = ", a);
+```
+
+![Ep6 Image 7](assets/Ep6image7.webp)
+
+it can also hold a string again, so this is a perfectly valid javascript code
+
+```js
+var a;
+console.log("Step 1,  a = ", a);
+a = 10;
+console.log("Step 2,  a = ", a);
+a = "Hello World";
+console.log("Step 3,  a = ", a);
+```
+
+![Ep6 Image 8](assets/Ep6image8.webp)
+
+So until and unless any value is not specified there, it is a placeholder undefined, when you have put integer, string etc. It will print that.
+
+**_JS is a loosely typed language a.k.a weakly typed language_**
