@@ -735,3 +735,230 @@ console.log("Step 3,  a = ", a);
 So until and unless any value is not specified there, it is a placeholder undefined, when you have put integer, string etc. It will print that.
 
 **_JS is a loosely typed language a.k.a weakly typed language_**
+
+### Ep. 7 The Scope Chain, Scope & Lexical Environment 🧐
+
+In this article, we will cover:
+
+1. What is Scope?
+
+2. What is Lexical Environment?
+
+3. What is Scope Chain?
+
+Scope in JS is directly related to lexical Environment. Let’s take below example:
+
+```js
+function a() {
+  console.log(b);
+}
+var b = 10;
+a();
+```
+
+When JS engine reach line 2 and try to execute. JS engine will look for “b” in local memory space of function a. But it won’t be there because we never created “b” inside function a().
+
+#### What will happen now? Will it print undefined or not defined or print value of variable?
+
+Let’s run and see output
+
+![Ep7 Image 1](assets/Ep7image1.webp)
+
+So, it printed value somehow.
+
+#### Let’s make it more complicated. Add another function inside function and try to print “b” inside that. Invoke function also. What will happen now?
+
+```js
+function a() {
+  c();
+  function c() {
+    console.log(b);
+  }
+}
+var b = 10;
+a();
+```
+
+Let’s run and see output again
+
+![Ep7 Image 2](assets/Ep7image2.webp)
+
+So, it again printed value again.
+
+#### Let’s take another example and move variable “b” inside the function but try to access it in global scope by printing it. What will happen now?
+
+```js
+function a() {
+  var b = 10;
+  c();
+  function c() {}
+}
+a();
+console.log(b);
+```
+
+Let’s run and see output again
+
+![Ep7 Image 3](assets/Ep7image3.webp)
+
+Here goes **ERROR**. which says **not defined**.
+
+Now, Scope comes into picture.
+
+### Scope means where you can access a specific function or variable .
+
+It mainly have two aspects:
+
+1. What is scope of this variable “b” ? Where can i access this variable “b” ?
+
+2. Is “b” inside the scope?? Like Is “b” inside the scope of function c?? Which means Can I access “b” inside function c??
+
+#### What happen when program runs?
+
+```js
+function a() {
+  var b = 10;
+  c();
+  function c() {}
+}
+a();
+console.log(b);
+```
+
+1. When we run this program, GEC is created and pushed inside Call Stack.
+
+2. When you run program, it will try to assign values to global variables and function. Example : It will assign value to function a().
+
+3. Then it will invoke the function a(), which will result in creating execution context for a().
+
+4. Now, function a() will reserve memory for variable b and function c().
+
+5. So variable b= undefined and function c = function reference
+
+6. Once, code starts executing b = 10.
+
+7. At line 3, function c is invoking which results in new execution context and pushed to call stack.
+   Press enter or click to view image in full size
+
+![Ep7 Image 4](assets/Ep7image4.webp)
+
+#### What is Lexical Env?
+
+### Where ever an execution context is created, a lexical env is also created. So, Lexical env is local memory, along with lexical environment of it’s parent.
+
+_Lexical means hierarchy or in sequence._
+
+**In below example**, function c() is lexically sitting inside function a(). And function a() is lexically inside the global scope.
+
+```js
+function a() {
+  var b = 10;
+  c();
+  function c() {}
+}
+a();
+console.log(b);
+```
+
+So, Let’s assume **orange box inside memory which represents lexical env of it’s parent.**
+
+1. In case of function c() execution context, it will represent lexical env of a() and a()’s parent i.e GEC.
+
+2. In case of function a() execution context , it will represent lexical env of GEC.
+
+3. In case of GEC, it represents outer env which is null.
+
+![Ep7 Image 5](assets/Ep7image5.webp)
+
+#### What happens if you try to do console.log for b inside function c( ) ?? Will it print value of b or gives not defined?
+
+```js
+function a() {
+  var b = 10;
+  c();
+  function c() {
+    console.log(b);
+  }
+}
+
+a();
+console.log(b);
+```
+
+1. When JS engine encounter this line, it tries to find out this inside the local memory of function c().
+
+2. It won’t find it because there is no variable b inside function c() memory.
+
+3. Now, JS engine goes to orange reference which goes to lexical environment of it’s parent which is function a()’s memory.
+
+4. Now, it find variable b inside function a()’s memory.
+
+5. **It goes back and prints value of b as 10.**
+
+![Ep7 Image 6](assets/Ep7image6.webp)
+
+#### If variable b is moved outside function a(). What happens if you try to do console.log for b inside function c( ) ?? Will it print value ?
+
+```js
+function a() {
+  c();
+  function c() {
+    console.log(b);
+  }
+}
+var b = 10;
+a();
+console.log(b);
+```
+
+Answer is , **_YES_**. Check below for explanation ⬇️
+
+![Ep7 Image 7](assets/Ep7image7.webp)
+
+#### If variable b is removed. What happens if you try to do console.log for b inside function c( ) ?? Will it print value ?
+
+```js
+function a() {
+  c();
+  function c() {
+    console.log(b);
+  }
+}
+a();
+```
+
+Answer is , **_NO_**. Check below for explanation ⬇️
+
+![Ep7 Image 8](assets/Ep7image8.webp)
+
+Output:
+
+![Ep7 Image 9](assets/Ep7image9.webp)
+
+Here, we can say: **\*_“b is not in the scope”._**
+
+So, this whole mechanism of searching b in local memory and if not found then into reference of the outer parent lexical env and so on is known as **_“SCOPE CHAIN”_**
+
+#### Summary:
+
+1. Lexical environment is created whenever an execution context is created. So, Lexical environment = Local memory + Reference to lexical env of parent.
+
+2. Parent i.e Lexical Parent is where actually that function sits inside the code.
+
+3. Chain of Lexical Env is known as Scope Chain. And it defines whether a variable or function is present inside the scope or not.
+
+#### Let’s see same in browser as well:
+
+1. Call stack with GEC, a()’s execution context and c()’s execution context⬇️
+
+![Ep7 Image 10](assets/Ep7image10.webp)
+
+2. function a() have Local memory + lexical env of parent as “Global” ⬇️
+
+![Ep7 Image 11](assets/Ep7image11.webp)
+
+3. function c() have Local memory + lexical env of parent i.e a()’s memory + lexical env of it’s parent’s parent i.e a()’s parent which is GEC ⬇️
+
+![Ep7 Image 12](assets/Ep7image12.webp)
+
+_Note: You can see “Closure” keyword in above screenshot. It’ll be covered in future articles._
