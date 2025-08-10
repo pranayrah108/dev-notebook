@@ -1621,3 +1621,425 @@ _So, Because of Closures, as these functions remember things even when they are 
 2. Those closed over variables are not Garbage Collected, so it means it is accumulating a lot of memory
 
 3. If not handled properly, it can lead to memory leaks.
+
+### Ep. 11 setTimeout + Closures Interview Question 🤓
+
+**_Basic Definition_** : _The `setTimeout()` function is commonly used if you wish to run your function a specified number of milliseconds from when the `setTimeout()` method was called. The general syntax of the method is:_
+
+`setTimeout(expression, timeout);`
+
+_where `expression` is the JavaScript code to run after `timeout` milliseconds have elapsed._
+
+![Ep11 Image 1](assets/Ep11image1.webp)
+
+#### If we run this program, What do you expect to see in console?
+
+Output:
+
+![Ep11 Image 2](assets/Ep11image2.webp)
+
+It’ll print value of `i` i.e 1 after 1 sec.
+
+Similarly if you try doing below, it’ll print after 3 sec.
+
+![Ep11 Image 3](assets/Ep11image3.webp)
+
+You might be thinking that `setTimeout()` will wait for 3 sec first to print `i` and then print **“Learn”**. But **NO**, it will print **“Learn”** first then wait for 3 sec and print value of `i` .
+
+#### What `setTimeout()` actually does?
+
+- At Line 3, function () forms a Closure. This function remember reference to `i`.
+
+- `setTimeout()` is taking that callback function and stores it into some place and attaches timer to it. And JS proceeds and goes to next line.
+
+- Once that timer expires, it takes that function, put it back in call stack and runs it.
+
+Let’s take an example of complicated problem.
+
+#### Print in console 1, 2, 3, 4, 5 … 10, after each and every second. Means 1 after 1 sec, 2 after 2 sec, 3 after 3 sec and so on. How would you do it?
+
+First solution comes to mind is using for loop and move `setTimeout()` inside it. Like below, right ?
+
+![Ep11 Image 4](assets/Ep11image4.webp.jpg)
+
+Let’s check output:
+
+![Ep11 Image 5](assets/Ep11image5.webp)
+
+#### This is not what we expected. Why’s that? What happened?🧐
+
+**Two reasons:**
+
+1. We learn **Closures** how it is a function along with it’s lexical environment. So, even when function is taken out from it’s original scope, still it will remember it’s original scope. It’ll have access to those variables of it’s lexical scope.
+
+So, When **`setTimeout()`**
+takes this function and stores it somewhere and attaches a timeout, it remember the reference to `i`.
+
+So, when loop runs the first time, it mix a copy of function, attaches timer and remember the reference of `i` .
+
+Similarly, all 10 copies of functions, remember the reference of `i` , not the value. And **all are pointing to same reference of `i`** .
+
+#### Why the hell they are pointing to same reference of `i` ? 😳
+
+Because the environment for all these functions are same. All these copies of `setTimeout()’s` **callback functions** refers to `i` in same memory space. 🤷🏻‍♀️
+
+2. **JS doesn’t wait for anything.** So, it will run the loop again and again 🔄.
+   So, `setTimeout()`will store all 10 functions and JS will move on. It won’t wait for timers to expire. It’ll print **“Learn”** and when the timer expires, it is too late.
+
+Now, value of `i` changed because the loop was constantly running. when this callback function runs, by that time, the value of `var i = 11` in memory location.
+
+#### That’s why it prints 11 every time🤷🏻‍♀️. Because all of these copies of callback functions are referring to same spot in memory🤦🏻‍♀️. Which now have run 10 times and it’s value became 11 because of increment in for loop🙄.
+
+#### Now, how we can fix this? 💡💡
+
+use _`let` instead of `var` because `let` has block scope. So for each and every loop iteration, i will be new variable every time. New copy of `i` will be in memory every time._
+
+_When setTimeout() runs , callback function will have new copy of `i` with it._
+
+![Ep11 Image 6](assets/Ep11image6.webp.jpg)
+
+Let’s run and see output:
+
+![Ep11 Image 7](assets/Ep11image7.webp)
+
+It worked 🎉🎉
+
+#### Let’s just revise again, what actually happened because of `let`:
+
+1. When loop started with `i = 1` , function formed a closure with new variable itself.
+
+2. After `i++` , when function formed closure again, it does have new variable with value 2 and saves it.
+
+3. And so on. This way it forms it makes 10 copies of `variable i` and forms closure with each and every function.
+
+#### So, Next time someone asks you what will be the difference in output of below two cases and why? You know the answer 😎
+
+#### Case 1:
+
+```js
+function x() {
+  for (var i = 1; i <= 10; i++) {
+    // using var here
+    setTimeout(function () {
+      console.log(i);
+    }, i * 1000);
+  }
+  console.log("Learn");
+}
+x();
+```
+
+#### Case 2:
+
+```js
+function x() {
+  for (let i = 1; i <= 10; i++) {
+    // using let here
+    setTimeout(function () {
+      console.log(i);
+    }, i * 1000);
+  }
+  console.log("Learn");
+}
+x();
+```
+
+**Answer:** _`let` is Block Scoped and it’s creates a new copy every time until loop is executed._
+
+#### And Twist again 🤭 : What If you have to only use var and prints 1,2,3,..10 every second? What to do?
+
+Think a bit , what could be the solution?
+
+#### Trick is , we have to make a new copy of variable i every time.
+
+![Ep11 Image 8](assets/Ep11image8.webp.jpg)
+
+So, we will create a new function **`close()`** and wrap `setTimeout()` inside that. And pass `i` every time in calling.
+
+#### Why it will work? 😬
+
+Because every time you call **`close()`** function with `i` , it creates a new copy of `i` for `setTimeout()` 😎.
+
+And that’s it. We covered how `setTimeout()` works and connected to closures. 👏🏼
+
+### Ep. 12 CRAZY JS INTERVIEW ft. Closures 🤯
+
+#### Question 1: What are closures In JS?
+
+A function along with a reference to its outer environment like together forms a closure.
+
+#### Question 2. How you’ll explain more about it?
+
+- Each and every function in JS have access to it’s outer lexical environment that means it has access to variables and functions which are in environment of it’s parent.
+
+- Even If this function is executed in some other scope instead of original scope, it will still remember it’s outer lexical environment where it was originally present in the code.
+
+#### Question 3. What about an example to explain all this?
+
+```js
+function outer() {
+  var a = 10;
+  function inner() {
+    console.log(a);
+  }
+  return inner;
+}
+
+outer()();
+```
+
+So, in above example, We have nested function `inner()`inside function `outer()` . `inner()` function have access to `variable a` which is present in it’s outer environment.
+
+Also, when you return `inner()` function and invoke `outer() `function, it will still console value of `variable a` . So, it remembered it’s outer lexical env even when called in other scope.
+
+So, `inner()` function = **Closure** 💡
+
+#### Question 4. What is `outer()()` ? Why there are two parenthesis?
+
+_Two parenthesis are used to call inner function._
+
+Example :
+
+- `outer()` will return below output:
+
+![Ep12 Image 1](assets/Ep12image1.webp)
+
+- `outer()()` will return below output:
+
+![Ep12 Image 2](assets/Ep12image2.webp)
+
+Also, This can be done in other way as well
+
+```js
+function outer() {
+  var a = 10;
+  function inner() {
+    console.log(a);
+  }
+  return inner;
+}
+
+var close = outer(); // this will give you outer function
+close(); // this will give you inner function and equivalent
+```
+
+#### Question 5. What if `var` declaration is moved to Line 5, just before return statement. What will happen? Will it still be a Closure?
+
+```js
+function outer() {
+  function inner() {
+    console.log(a);
+  }
+  var a = 10;
+  return inner;
+}
+
+var close = outer(); // this will give you outer function
+close(); // this will give you inner function and equivalent
+```
+
+Answer is **YES, it will still be. Closure**. It doesn’t matter what the sequence is, means where the statement is. For closure, all matter is function has access to it’s lexical environment. Also, output will be same.
+
+#### Question 6. What if `var` is replaced by `let` in Line 5. What will happen?
+
+```js
+function outer() {
+  function inner() {
+    console.log(a);
+  }
+  let a = 10; // let instead of var
+  return inner;
+}
+
+var close = outer(); // this will give you outer function
+close(); // this will give you inner function and equivalent
+```
+
+Answer is **It won’t affect anything**. It ‘ll still be a closure and output will be same.
+
+#### Question 7. What if `outer()` have a parameter? What happens then?
+
+```js
+function outer(b) {
+  function inner() {
+    console.log(a, b); // try printing b here
+  }
+  let a = 10; // let instead of var
+  return inner;
+}
+
+// Passing argument here
+var close = outer("Hi Closures"); // this will give you outer function
+close(); // this will give you inner function and equivalent
+```
+
+Answer is **It won’t affect anything.** It ‘ll still be a closure and we can try printing value of `b` as well in console.
+
+Reason: `b` is also the part of outer environment
+
+Output will be:
+
+![Ep12 Image 3](assets/Ep12image3.webp)
+
+#### Question 8. What if `outer()` function is nested into another function? Will `inner()` function have access to `outer()` function’s environment as well?
+
+```js
+function outest() {
+  var c = 12;
+  function outer(b) {
+    function inner() {
+      console.log(a, b, c); // try printing b and c  here
+    }
+    let a = 10; // let instead of var
+    return inner;
+  }
+  return outer;
+}
+
+// Passing argument here
+var close = outest()("Hi Closures"); // this will give you outer function
+close(); // this will give you inner function and equivalent
+```
+
+Answer is **YES, `inner()` function have access to `outer()` function’s environment as well.**
+
+Try printing `variable c` inside `inner()` function.
+
+Output will be :
+
+![Ep12 Image 4](assets/Ep12image4.webp)
+
+#### Question 9. What if we have global variable with conflicted name?
+
+```js
+function outest() {
+  var c = 12;
+  function outer(b) {
+    function inner() {
+      console.log(a, b, c); // try printing b and c  here
+    }
+    let a = 10; // let instead of var
+    return inner;
+  }
+  return outer;
+}
+
+let a = 100;
+// Passing argument here
+var close = outest()("Hi Closures"); // this will give you outer function
+close(); // this will give you inner function and equivalent
+```
+
+`inner()` function has a closure with `variable a` on **Line 7** i.e `let a = 10` .So the `inner()` function has reference for `variable a` is at Line 7.
+`let a = 100;` at **Line 13** is in different scope. So, it will print output with value 10.
+
+But **if we comment Line 7**, _then it will go to outer environments looking for a and prints 100_. Check below:
+
+```js
+function outest() {
+  var c = 12;
+  function outer(b) {
+    function inner() {
+      console.log(a, b, c); // try printing b and c  here
+    }
+    //let a =10; // let instead of var
+    return inner;
+  }
+  return outer;
+}
+
+let a = 100;
+// Passing argument here
+var close = outest()("Hi Closures"); // this will give you outer function
+close(); // this will give you inner function and equivalent
+```
+
+Also, **if we comment Line 13**, _then it will print “ReferenceError: a is not defined”_. Check below:
+
+```js
+function outest() {
+  var c = 12;
+  function outer(b) {
+    function inner() {
+      console.log(a, b, c); // try printing b and c  here
+    }
+    //let a =10; // let instead of var
+    return inner;
+  }
+  return outer;
+}
+
+// let a =100;
+// Passing argument here
+var close = outest()("Hi Closures"); // this will give you outer function
+close(); // this will give you inner function and equivalent
+```
+
+#### Question 10. What are the advantages of Closure?
+
+1. Module Design Patterns
+
+2. Currying
+
+3. Function Like once
+
+4. memoize
+
+5. maintaining state in async world
+
+6. setTimeouts
+
+7. Iterators
+
+8. Data Hiding and Encapsulation
+
+#### Question 11. What are disadvantages of Closure?
+
+1. There could be over consumption of memory because every time a closure is formed, it consumes a lot of memory.
+
+2. Those closed over variables are not Garbage Collected, so it means it is accumulating a lot of memory
+
+3. If not handled properly, it can lead to memory leaks.
+
+### Question 11. What is Garbage Collector?
+
+Garbage Collector is a program in browser or in JS engine, which free up unutilised memory.
+In languages like c, c++, it is upto developers how we allocate and deallocate memory but in high level programming language like JS, most work is done by JS engine.
+So, whenever there are some unused variables, Garbage collector takes those out of memory
+
+#### Question 11. How Closures and Garbage Collector related to each other?
+
+```js
+function a() {
+  var x = 10;
+  return function b() {
+    console.log(x);
+  };
+}
+var y = a();
+```
+
+In above example, `function b()` is closure. So, ideally after executing `function a()` , all it’s memory including `variable x` should be garbage collected. It wasn’t needed anymore. But because `function b()` is closure and `variable x` is being referred and assigning value `variable y`, so it won’t free up as later on , we might call `y()` .
+
+This way more closures means keeping a lot of memory accumulating.
+
+Although, some modern browsers like chrome and JS engines like V8, they have smart garbage collection mechanism, in which it somehow identify unreachable variables and collects these garbage variables.
+
+#### Question 13. What is Smartly garbaged variable, examples?
+
+```js
+function a() {
+  var x = 10,
+    z = 20;
+  return function b() {
+    console.log(x);
+  };
+}
+var y = a();
+```
+
+In above example, `variable z` is not being used . So when `function b()` is returned ,`variable z` will be smartly garbaged but `variable x` is not. So, `variable z` won’t be in memory.
+
+With this, we covers basic questions with explanation.
+
+Thanks for reading the article ❤️
