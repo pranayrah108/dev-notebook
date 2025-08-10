@@ -2043,3 +2043,117 @@ In above example, `variable z` is not being used . So when `function b()` is ret
 With this, we covers basic questions with explanation.
 
 Thanks for reading the article ❤️
+
+#### Closure JS Interview exercise
+
+```js
+function outerFunction() {
+  var outerVariable = "Hi, ";
+  function innerFunction(name) {
+    console.log(outerVariable + name); // What is logged?
+  }
+  return innerFunction;
+}
+
+var inner = outerFunction();
+inner("Closure");
+```
+
+```js
+function outer() {
+  var x = 10;
+  function inner() {
+    console.log(x); // What is logged?
+  }
+  return inner;
+}
+var innerFunc = outer();
+innerFunc();
+```
+
+```js
+function outer() {
+  var x = 10;
+  function inner() {
+    console.log(x); // What is logged?
+  }
+  var x = 20;
+  return inner;
+}
+var innerFunc = outer();
+innerFunc();
+```
+
+```js
+function outer() {
+  var x = 10;
+  function inner() {
+    var y = 12;
+    console.log(x + y); // What is logged?
+  }
+  return inner;
+}
+var innerFunc = outer();
+innerFunc();
+```
+
+```js
+var a = 1;
+function b() {
+  a = 10;
+  return;
+  function a() {}
+}
+b();
+console.log(a); // What is logged?
+```
+
+```js
+function test() {
+  console.log(a); // What is logged?
+  console.log(foo()); // What is logged?
+
+  var a = 1;
+  function foo() {
+    return 2;
+  }
+}
+
+test();
+```
+
+```js
+var a = 1;
+
+function someFunction(number) {
+  function otherFunction(input) {
+    return a;
+  }
+
+  a = 5;
+
+  return otherFunction;
+}
+
+var firstResult = someFunction(19); // What is firstResult?
+var result = firstResult(12); // What is result?
+```
+
+```js
+var fullname = "Daisy Doe";
+var obj = {
+  fullname: "Vera Singh",
+  prop: {
+    fullname: "Amar Akbar Anthony",
+    getFullname: function () {
+      return this.fullname;
+    },
+  },
+};
+
+console.log(obj.prop.getFullname());
+
+var test = obj.prop.getFullname;
+
+console.log(test()); // What is logged?
+```
