@@ -2157,3 +2157,235 @@ var test = obj.prop.getFullname;
 
 console.log(test()); // What is logged?
 ```
+
+### Ep. 13 FIRST CLASS FUNCTIONS ft. Anonymous Functions
+
+A function without a name is anonymous function.A function without a name is **anonymous function**.
+
+Now, Other related questions are::
+
+What are **first class functions** in javascript?
+
+What is **difference between function statement and function expression?**
+
+**Let move on, we’ll be covering all below topics:**
+
+1. Function Statement
+2. Function Expression
+3. Function Declaration
+4. Anonymous Function
+5. Named Function Expression
+6. Difference between Parameters and Arguments ?
+7. First Class Functions
+
+First of all, let’s see **What is Function Statement?**
+
+_If you write a function keyword and give it a name like below then it is a function statement._
+
+```js
+function a() {}
+```
+
+Let’s just say **function “a”** have nothing more then console like below:
+
+```js
+function a() {
+  console.log("Hello, I am calling a");
+}
+```
+
+So, this way of creating a function is called **Function Statement** 🤷🏻‍♀️.
+
+Now, you can assign a function to a variable 😮 also :
+
+```js
+var b = function () {
+  console.log("Hello, b called");
+};
+```
+
+Above, We **assigned a function to variable “b”**. Now function acts like a value. Now this is known as **Function Expression** 🤷🏻‍♀️.
+
+_So, Function Statement and Function Expressions, both are ways to create functions which we are doing from many years._
+
+Now, **What the difference between Function Statement and Function Expression?**
+
+**Answer is:** Hoisting.. 🧐
+
+Now, **the question is how??**
+
+So, when we try to call both functions on top of file and check output then what happens?
+
+```js
+a();
+b();
+
+//Function Statement
+function a() {
+  console.log("Hello, a called");
+}
+
+//Function Expression
+var b = function () {
+  console.log("Hello, b called");
+};
+```
+
+![Ep13 Image 1](assets/Ep13image1.webp)
+
+**Output : “b”** throws an error
+
+**Uncaught TypeError: “b” is not a function 😳🤨**
+
+![Ep13 Image 2](assets/Ep13image2.webp)
+
+As you already know from hoisting in previous articles. **Function “a”** will create a memory in memory creation phase and function is assigned to a. But in case of **Function expression**, “b” will be treated like any another variable. So, “b” is assigned undefined initially until code hits the line 9. So, when JS engine executes line by line and reaches line no. 9 then only function will be assigned to variable “b” until then it is undefined.
+
+#### So, that’s the major difference between Function Statement and Function Expression.
+
+**What is Function Declaration?**🧐
+
+It is same as Function Statement
+
+**What are Anonymous Function?**🧐
+
+A function without a name is Anonymous Function. These functions doesn’t have their own identity. This means if I do below then it will give you syntax error
+
+```js
+// Anonymous Function
+function () {
+
+}
+
+```
+
+![Ep13 Image 3](assets/Ep13image3.webp)
+
+**_Why is the error?_**
+
+_Because Anonymous Function looks exactly like a function statement but doesn’t have a name. As per ECMA Script specification, A function statement should always have a name._
+
+Now the question is **what’s even the use of Anonymous Functions?**🤔
+
+These functions are used in a place where functions are used as values. This means that you can use those to assign as values to some variables, like we did in Function expression.
+
+**_What is Named Function Expressions?_**
+
+_A named function expression is like a function expression but instead of anonymous function, we use a function with a name._
+
+```js
+//Named Function Expression
+var b = function xyz() {
+  console.log("Hello, b called");
+};
+```
+
+So, if interviewer asks you **“How can you have the name of function itself and then put it into an expression”?**
+
+**Answer is:** _Named function expression. Function “xyz” have name to itself and then assigned it to variable “b” and this makes named function expression._
+
+#### Next question: Can you call function “xyz”? What will happen then?
+
+```js
+//Named Function Expression
+var b = function xyz() {
+  console.log("Hello, b called");
+};
+
+b(); // output here?
+xyz(); // output here?
+```
+
+**Output :**
+
+#### Uncaught ReferenceError: “xyz” is not defined 🧐 😮
+
+![Ep13 Image 4](assets/Ep13image4.webp)
+
+![Ep13 Image 5](assets/Ep13image5.webp)
+
+#### So, What’s the reason? Why “xyz” is not defined?
+
+_Because function “xyz” is used as value and not in global scope. But it is created in local scope._
+
+_So, if you try to access it inside the function then you can do that._ See below:
+
+![Ep13 Image 6](assets/Ep13image6.webp)
+
+![Ep13 Image 7](assets/Ep13image7.webp)
+
+#### What is difference between Parameters and Arguments?
+
+The local variable in function scope is called **parameters.**
+
+See below example: You can not access param1, param2 outside the function
+
+```js
+var b = function (param1, param2) {
+  console.log("Hello, b called");
+};
+```
+
+The values which we pass inside a function are called **arguments.**
+
+```js
+var b = function (param1, param2) {
+  console.log("Hello, b called");
+};
+
+b(1, 2); // 1 and 2 are arguments
+```
+
+#### What are First Class functions?
+
+The ability to use functions as values which means
+
+1. can be passed as an arguments into another functions
+
+2. and can be returned from the functions
+   is known as First class Functions.
+
+**Example 1:** When you can pass function inside another function as an arguments.
+
+```js
+var b = function (param1) {
+  console.log("Param 1 =", param1);
+};
+
+b(function () {});
+```
+
+![Ep13 Image 8](assets/Ep13image8.webp)
+
+You can also do this using Named function like below:
+
+```js
+// First Class function
+var b = function (param1) {
+  console.log("Param 1 =", param1); // cheking here if accessible
+};
+
+// Named function
+function xyz() {}
+
+b(xyz); // passing named function as xyz
+```
+
+![Ep13 Image 9](assets/Ep13image9.webp)
+
+**Example 2:** Another thing that we can do is return a function from a function. See below:
+
+```js
+var b = function (param1) {
+  console.log("Param 1 =", param1);
+  return function () {};
+};
+
+function xyz() {}
+
+console.log("Return value of b = ", b(xyz));
+```
+
+![Ep13 Image 10](assets/Ep13image10.webp)
+
+This programming concept of First class function is exist in other languages also.
