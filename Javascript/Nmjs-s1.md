@@ -2389,3 +2389,330 @@ console.log("Return value of b = ", b(xyz));
 ![Ep13 Image 10](assets/Ep13image10.webp)
 
 This programming concept of First class function is exist in other languages also.
+
+### Ep. 14 Callback Functions in JS ft. Event Listeners
+
+### Callback Functions
+
+- Functions are first class citizens ie. take a function A and pass it to another function B. Here, A is a callback function. So basically I am giving access to function B to call function A. This callback function gives us the access to whole **Asynchronous** world in **Synchronous** world.
+
+```js
+setTimeout(function () {
+  console.log("Timer");
+}, 1000); // first argument is callback function and second is timer.
+```
+
+- JS is a synchronous and single threaded language. But due to callbacks, we can do async things in JS.
+
+- ```js
+  setTimeout(function () {
+    console.log("timer");
+  }, 5000);
+  function x(y) {
+    console.log("x");
+    y();
+  }
+  x(function y() {
+    console.log("y");
+  });
+  // x y timer
+  ```
+
+  - In the call stack, first x and y are present. After code execution, they go away and stack is empty. Then after 5 seconds (from beginning) anonymous suddenly appear up in stack ie. setTimeout
+  - All 3 functions are executed through call stack. If any operation blocks the call stack, its called blocking the main thread.
+  - Say if x() takes 30 sec to run, then JS has to wait for it to finish as it has only 1 call stack/1 main thread. Never block main thread.
+  - Always use **async** for functions that take time eg. setTimeout
+
+- ```js
+  // Another Example of callback
+  function printStr(str, cb) {
+    setTimeout(() => {
+      console.log(str);
+      cb();
+    }, Math.floor(Math.random() * 100) + 1);
+  }
+  function printAll() {
+    printStr("A", () => {
+      printStr("B", () => {
+        printStr("C", () => {});
+      });
+    });
+  }
+  printAll(); // A B C // in order
+  ```
+
+### Event Listener
+
+- We will create a button in html and attach event to it.
+
+  ```js
+  // index.html
+  <button id="clickMe">Click Me!</button>;
+
+  // in index.js
+  document.getElementById("clickMe").addEventListener("click", function xyz() {
+    //when event click occurs, this callback function (xyz) is called into callstack
+    console.log("Button clicked");
+  });
+  ```
+
+- Lets implement a increment counter button.
+  - Using global variable (not good as anyone can change it)
+    ```js
+    let count = 0;
+    document
+      .getElementById("clickMe")
+      .addEventListener("click", function xyz() {
+        console.log("Button clicked", ++count);
+      });
+    ```
+  - Use closures for data abstraction
+    `js
+function attachEventList() {
+  //creating new function for closure
+  let count = 0;
+  document
+    .getElementById("clickMe")
+    .addEventListener("click", function xyz() {
+      console.log("Button clicked", ++count); //now callback function forms closure with outer scope(count)
+    });
+}
+attachEventList();
+`
+    ![Ep14 Image 1](assets/Ep14image1.jpg)
+
+### Garbage Collection and removeEventListeners
+
+- Event listeners are heavy as they form closures. So even when call stack is empty, EventListener won't free up memory allocated to count as it doesn't know when it may need count again. So we remove event listeners when we don't need them (garbage collected) onClick, onHover, onScroll all in a page can slow it down heavily.
+
+### Ep. 15 Asynchronous JavaScript & EVENT LOOP from scratch
+
+> Note: Call stack will execeute any execeution context which enters it. Time, tide and JS waits for none. TLDR; Call stack has no timer.
+
+- Browser has JS Engine which has Call Stack which has Global execution context, local execution context etc.
+
+  - But browser has many other superpowers - Local storage space, Timer, place to enter URL, Bluetooth access, Geolocation access and so on.
+  - Now JS needs some way to connect the callstack with all these superpowers. This is done using Web APIs.
+
+    ![Ep15 Image 1](assets/Ep15image1.jpg)
+
+### WebAPIs
+
+None of the below are part of Javascript! These are extra superpowers that browser has. Browser gives access to JS callstack to use these powers.
+
+![Ep15 Image 2](assets/Ep15image2.jpg)
+
+- setTimeout(), DOM APIs, fetch(), localstorage, console (yes, even console.log is not JS!!), location and so many more.
+
+  - setTimeout() : Timer function
+  - DOM APIs : eg.Document.xxxx ; Used to access HTML DOM tree. (Document Object Manipulation)
+  - fetch() : Used to make connection with external servers eg. Netflix servers etc.
+
+- We get all these inside call stack through global object ie. window
+
+  - Use window keyword like : window.setTimeout(), window.localstorage, window.console.log() to log something inside console.
+  - As window is global obj, and all the above functions are present in global object, we don't explicity write window but it is implied.
+
+- Let's undertand the below code image and its explaination:
+
+  ![Ep15 Image 3](assets/Ep15image3.jpg)
+
+  - ```js
+    console.log("start");
+    setTimeout(function cb() {
+      console.log("timer");
+    }, 5000);
+    console.log("end");
+    // start end timer
+    ```
+  - First a GEC is created and put inside call stack.
+  - console.log("Start"); // this calls the console web api (through window) which in turn actually modifies values in console.
+  - setTimeout(function cb() { //this calls the setTimeout web api which gives access to timer feature. It stores the callback cb() and starts timer. console.log("Callback");}, 5000);
+  - console.log("End"); // calls console api and logs in console window. After this GEC pops from call stack.
+  - While all this is happening, the timer is constantly ticking. After it becomes 0, the callback cb() has to run.
+  - Now we need this cb to go into call stack. Only then will it be executed. For this we need **event loop** and **Callback queue**
+
+### Event Loops and Callback Queue
+
+Q: How after 5 secs timer is console?
+
+- cb() cannot simply directly go to callstack to be execeuted. It goes through the callback queue when timer expires.
+- Event loop keep checking the callback queue, and see if it has any element to puts it into call stack. It is like a gate keeper.
+- Once cb() is in callback queue, eventloop pushes it to callstack to run. Console API is used and log printed
+
+![Ep15 Image 4](assets/Ep15image4.jpg)
+
+Q: Another example to understand Eventloop & Callback Queue.
+
+See the below Image and code and try to understand the reason:
+
+![Ep15 Image 5](assets/Ep15image5.jpg)
+
+Explaination?
+
+- ```js
+  console.log("Start");
+  document.getElementById("btn").addEventListener("click", function cb() {
+    // cb() registered inside webapi environment and event(click) attached to it. i.e. REGISTERING CALLBACK AND ATTACHING EVENT TO IT.
+    console.log("Callback");
+  });
+  console.log("End"); // calls console api and logs in console window. After this GEC get removed from call stack.
+  // In above code, even after console prints "Start" and "End" and pops GEC out, the eventListener stays in webapi env(with hope that user may click it some day) until explicitly removed, or the browser is closed.
+  ```
+
+- Eventloop has just one job to keep checking callback queue and if found something push it to call stack and delete from callback queue.
+
+Q: Need of callback queue?
+
+**Ans**: Suppose user clciks button x6 times. So 6 cb() are put inside callback queue. Event loop sees if call stack is empty/has space and whether callback queue is not empty(6 elements here). Elements of callback queue popped off, put in callstack, executed and then popped off from call stack.
+
+<br>
+
+### Behaviour of fetch (**Microtask Queue?**)
+
+Let's observe the code below and try to understand
+
+```js
+console.log("Start"); // this calls the console web api (through window) which in turn actually modifies values in console.
+setTimeout(function cbT() {
+  console.log("CB Timeout");
+}, 5000);
+fetch("https://api.netflix.com").then(function cbF() {
+    console.log("CB Netflix");
+}); // take 2 seconds to bring response
+// millions lines of code
+console.log("End");
+
+Code Explaination:
+* Same steps for everything before fetch() in above code.
+* fetch registers cbF into webapi environment along with existing cbT.
+* cbT is waiting for 5000ms to end so that it can be put inside callback queue. cbF is waiting for data to be returned from Netflix servers gonna take 2 seconds.
+* After this millions of lines of code is running, by the time millions line of code will execute, 5 seconds has finished and now the timer has expired and response from Netflix server is ready.
+* Data back from cbF ready to be executed gets stored into something called a Microtask Queue.
+* Also after expiration of timer, cbT is ready to execute in Callback Queue.
+* Microtask Queue is exactly same as Callback Queue, but it has higher priority. Functions in Microtask Queue are executed earlier than Callback Queue.
+* In console, first Start and End are printed in console. First cbF goes in callstack and "CB Netflix" is printed. cbF popped from callstack. Next cbT is removed from callback Queue, put in Call Stack, "CB Timeout" is printed, and cbT removed from callstack.
+* See below Image for more understanding
+```
+
+![Ep15 Image 6](assets/Ep15image6.jpg)
+
+Microtask Priority Visualization
+
+![Ep15 Image 7](assets/Ep15image7.jpg)
+
+#### What enters the Microtask Queue ?
+
+- All the callback functions that come through promises go in microtask Queue.
+- **Mutation Observer** : Keeps on checking whether there is mutation in DOM tree or not, and if there, then it execeutes some callback function.
+- Callback functions that come through promises and mutation observer go inside **Microtask Queue**.
+- All the rest goes inside **Callback Queue aka. Task Queue**.
+- If the task in microtask Queue keeps creating new tasks in the queue, element in callback queue never gets chance to be run. This is called **starvation**
+
+### Some Important Questions
+
+1. **When does the event loop actually start ? -** Event loop, as the name suggests, is a single-thread, loop that is _almost infinite_. It's always running and doing its job.
+
+2. **Are only asynchronous web api callbacks are registered in web api environment? -** YES, the synchronous callback functions like what we pass inside map, filter and reduce aren't registered in the Web API environment. It's just those async callback functions which go through all this.
+
+3. **Does the web API environment stores only the callback function and pushes the same callback to queue/microtask queue? -** Yes, the callback functions are stored, and a reference is scheduled in the queues. Moreover, in the case of event listeners(for example click handlers), the original callbacks stay in the web API environment forever, that's why it's adviced to explicitly remove the listeners when not in use so that the garbage collector does its job.
+
+4. **How does it matter if we delay for setTimeout would be 0ms. Then callback will move to queue without any wait ? -** No, there are trust issues with setTimeout() 😅. The callback function needs to wait until the Call Stack is empty. So the 0 ms callback might have to wait for 100ms also if the stack is busy.
+
+<br>
+
+### Observation of Eventloop, Callback Queue & Microtask Queue [**GiF**]
+
+![Ep15 Image 8](assets/Ep15image8.gif)
+
+![Ep15 Image 9](assets/Ep15image9.gif)
+
+![Ep15 Image 10](assets/Ep15image10.gif)
+
+![Ep15 Image 11](assets/Ep15image11.gif)
+
+![Ep15 Image 12](assets/Ep15image12.gif)
+
+![Ep15 Image 13](assets/Ep15image13.jpg)
+
+### Ep. 16 : JS Engine Exposed, Google's V8 Architecture
+
+- JS runs literally everywhere from smart watch to robots to browsers because of Javascript Runtime Environment (JRE).
+
+- JRE is like a big container which has everything which are required to run Javascript code.
+
+- JRE consists of a JS Engine (❤️ of JRE), set of APIs to connect with outside environment, event loop, Callback queue, Microtask queue etc.
+
+- Browser can execute javascript code because it has the Javascript Runtime Environment.
+
+- ECMAScript is a governing body of JS. It has set of rules which are followed by all JS engines like Chakra(Internet Explorer), V8 Engine (Edge) Spidermonkey(Firefox)(first javascript engine created by JS creator himself), v8(Chrome)
+
+- Javascript Engine is not a machine. Its software written in low level languages (eg. C++) that takes in hi-level code in JS and spits out low level machine code.
+
+- Code inside Javascript Engine passes through 3 steps : **Parsing**, **Compilation** and **Execution**
+
+  1. **Parsing** - Code is broken down into tokens. In "let a = 7" -> let, a, =, 7 are all tokens. Also we have a syntax parser that takes code and converts it into an AST (Abstract Syntax Tree) which is a JSON with all key values like type, start, end, body etc (looks like package.json but for a line of code in JS. Kinda unimportant)(Check out astexplorer.net -> converts line of code into AST).
+  2. **Compilation** - JS has something called Just-in-time(JIT) Compilation - uses both interpreter & compiler. Also compilation and execution both go hand in hand. The AST from previous step goes to interpreter which converts hi-level code to byte code and moves to execeution. While interpreting, compiler also works hand in hand to compile and form optimized code during runtime. **Does JavaScript really Compiles?** The answer is a loud **YES**. JS used to be only interpreter in old times, but now has both to compile and interpreter code and this make JS a JIT compiled language, its like best of both world.
+
+  3. **Execution** - Needs 2 components ie. Memory heap(place where all memory is stored) and Call Stack(same call stack from prev episodes). There is also a garbage collector. It uses an algo called **Mark and Sweep**.
+
+     ![Ep16 Image 1](assets/Ep16image1.jpg)
+
+     ![Ep16 Image 2](assets/Ep16image2.jpg)
+
+- Companies use different JS engines and each try to make theirs the best.
+
+  - v8 of Google has Interpreter called Ignition, a compiler called Turbo Fan and garbage collector called Orinoco
+  - v8 architecture:
+
+    ![Ep16 Image 3](assets/Ep16image3.jpg)
+
+### Ep. 17 : Trust issues with setTimeout()
+
+- setTimeout with timer of 5 secs sometimes does not exactly guarantees that the callback function will execute exactly after 5s.
+
+- Let's observe the below code and it's explaination
+
+  ```js
+  console.log("Start");
+  setTimeout(function cb() {
+    console.log("Callback");
+  }, 5000);
+  console.log("End");
+  // Millions of lines of code to execute
+
+  // o/p: Over here setTimeout exactly doesn't guarantee that the callback function will be called exactly after 5s. Maybe 6,7 or even 10! It all depends on callstack. Why?
+  ```
+
+  Reason?
+
+  - First GEC is created and pushed in callstack.
+  - Start is printed in console
+  - When setTimeout is seen, callback function is registered into webapi's env. And timer is attached to it and started. callback waits for its turn to be execeuted once timer expires. But JS waits for none. Goes to next line.
+  - End is printed in console.
+  - After "End", we have 1 million lines of code that takes 10 sec(say) to finish execution. So GEC won't pop out of stack. It runs all the code for 10 sec.
+  - But in the background, the timer runs for 5s. While callstack runs the 1M line of code, this timer has already expired and callback fun has been pushed to Callback queue and waiting to pushed to callstack to get executed.
+  - Event loop keeps checking if callstack is empty or not. But here GEC is still in stack so cb can't be popped from callback Queue and pushed to CallStack. **Though setTimeout is only for 5s, it waits for 10s until callstack is empty before it can execute** (When GEC popped after 10sec, callstack() is pushed into call stack and immediately executed (Whatever is pushed to callstack is executed instantly).
+  - This is called as the **[Concurrency model](https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop)** of JS. This is the logic behind setTimeout's trust issues.
+
+- The First rule of JavaScript: Do not **block the main thread** (as JS is a single threaded(only 1 callstack) language).
+
+- In below example, we are blocking the main thread. Observe Questiona and Output.
+
+  ![Ep17 Image 1](assets/Ep17image1.jpg)
+
+- setTimeout guarantees that it will take at least the given timer to execute the code.
+
+- JS is a synchronous single threaded language. With just 1 thread it runs all pieces of code. It becomes kind of an interpreter language, and runs code very fast inside browser (no need to wait for code to be compiled) (JIT - Just in time compilation). And there are still ways to do async operations as well.
+
+- What if **timeout = 0sec**?
+  ```js
+  console.log("Start");
+  setTimeout(function cb() {
+    console.log("Callback");
+  }, 0);
+  console.log("End");
+  // Even though timer = 0s, the cb() has to go through the queue. Registers calback in webapi's env , moves to callback queue, and execute once callstack is empty.
+  // O/p - Start End Callback
+  // This method of putting timer = 0, can be used to defer a less imp function by a little so the more important function(here printing "End") can take place
+  ```
