@@ -5315,3 +5315,749 @@ console.log(a, b); // 4 6
 - It’s a powerful ES6 feature that makes code concise and readable.
 
 ---
+
+# 39
+
+---
+
+# Understanding Functions in TypeScript
+
+Now we are going to begin with **understanding functions**.
+
+A **function** is a subprogram which can be called as and when required.
+
+In JavaScript, functions are very useful and, in some cases, syntactically different as well.  
+For example, before JavaScript had classes, **functions were used as constructors**, essentially acting as classes. This concept of a **constructor function** is also applicable in TypeScript.
+
+Almost the same lineage of JavaScript is followed in TypeScript. However, with TypeScript, functions are even **stricter** and behave in a more traditional way.
+
+---
+
+## Declaring a Function in TypeScript
+
+To declare a function, we use the `function` keyword, followed by the function name and parentheses.
+
+Example:
+
+```typescript
+function sum() {
+  console.log("Function called");
+}
+```
+
+- The code inside `{ }` is the **body of the function**.
+- To call the function, simply use its name followed by parentheses:
+
+```typescript
+sum();
+sum();
+```
+
+Output:
+
+```sql
+Function called
+Function called
+```
+
+---
+
+## Function Parameters
+
+Most functions receive arguments which are processed, and optionally return a value.
+
+In TypeScript, you define parameters by just giving the **parameter name**, optionally annotating the **data type**:
+
+```typescript
+function sum(a: number, b: number) {
+  return a + b;
+}
+
+let answer = sum(5, 6);
+console.log(answer); // 11
+```
+
+- `a` and `b` are **parameters** of type `number`.
+- The function **returns the sum** of `a` and `b`.
+- TypeScript infers the **return type** automatically (`number` in this case).
+
+---
+
+## Returning Values
+
+You can explicitly annotate the return type:
+
+```typescript
+function sum(a: number, b: number): number {
+  return a + b;
+}
+```
+
+- This ensures TypeScript knows the function **returns a number**.
+- If no `return` statement exists, the function returns `undefined` by default.
+
+Example:
+
+```typescript
+function test() {
+  console.log("Test");
+}
+
+let a = test();
+console.log(a); // undefined
+```
+
+- `console.log(a)` prints `undefined` because the function has no return value.
+- If a function **does not return anything**, the TypeScript return type can be annotated as `void`.
+
+---
+
+## TypeScript vs JavaScript Functions
+
+TypeScript functions provide **strict typing** for parameters and return types:
+
+```typescript
+function sum(a: number, b: number): number {
+  return a + b;
+}
+```
+
+- Each **parameter has a type**.
+- The **function return type** is explicitly declared.
+- This adds safety and avoids unexpected behavior compared to plain JavaScript functions.
+
+Later, we will also discuss **function types**, which allow more advanced typing for functions in TypeScript.
+
+---
+
+# 40
+
+# Understanding Anonymous Functions in TypeScript
+
+In this lecture, we are going to discuss **anonymous functions** in TypeScript.
+
+This concept is essentially the **function expression** concept from JavaScript, which can also be used in TypeScript.
+
+---
+
+## What is an Anonymous Function?
+
+JavaScript provides a variety of ways to create and work with functions. One of the most commonly used ways is **function expressions** — the same applies to TypeScript.
+
+Let’s understand **why it is called anonymous**.
+
+---
+
+## Traditional Named Function
+
+A typical function has a name, parameters, and a body. For example:
+
+```typescript
+function sum(a: number, b: number) {
+  return a + b;
+}
+
+console.log(sum(5, 6));
+```
+
+- The function has a name (`sum`).
+- You call the function by its name.
+
+---
+
+## Anonymous Function / Function Expression
+
+In JavaScript and TypeScript, you can write a function **without a name** and assign it to a variable.
+
+```typescript
+let sum = function (a: number, b: number): number {
+  return a + b;
+};
+
+console.log(sum(5, 6));
+```
+
+- The function **does not have a name**.
+- The entire function is **assigned to a variable** (`sum`), which is an **object of type function**.
+- You call the function using this variable.
+
+---
+
+## Checking the Type
+
+You can check the type of the variable holding the anonymous function:
+
+```typescript
+console.log(typeof sum); // function
+```
+
+- The variable `sum` is of **type function**, not a numeric type.
+- This demonstrates that **anonymous functions are objects that reference a function**.
+
+---
+
+## Why Use Anonymous Functions?
+
+Anonymous functions are widely used in **JavaScript and TypeScript** for:
+
+- Passing functions as arguments to other functions.
+- Storing functions in variables.
+- Creating **inline logic** without polluting the namespace with function names.
+
+---
+
+## Common Questions
+
+1.  **How do you invoke an anonymous function?**  
+    Even though the function has no name, it is assigned to a variable. This variable **acts as a pointer** to the function, and you call the function using the variable name:
+
+    ```typescript
+    let sum = function (a: number, b: number) {
+      return a + b;
+    };
+
+    console.log(sum(5, 6));
+    ```
+
+2.  **What is the type of an anonymous function variable?**  
+    If you check `typeof sum`, it will show `function`. The variable **contains a reference to the function**, not the return type of the function itself.
+
+---
+
+# 41
+
+---
+
+# Understanding Arrow Functions in TypeScript
+
+In this lecture, we are going to discuss a very important concept in modern JavaScript and TypeScript — **arrow functions**.
+
+Arrow functions, also called **fat arrow functions**, were introduced in ES6. Some people refer to them as **lambda functions** due to influence from other programming languages, but JavaScript and TypeScript use the term **arrow function**.
+
+---
+
+## What is an Arrow Function?
+
+An arrow function is essentially **a more concise way to write a function**.
+
+- There is a slight behavioral difference compared to traditional functions, especially with the `this` object (which we will explore later).
+- Arrow functions are often less cumbersome to write than traditional functions.
+
+---
+
+## Syntax of Arrow Functions
+
+### Traditional Function Expression
+
+```typescript
+let sum = function (a: number, b: number): number {
+  return a + b;
+};
+```
+
+- This is an **anonymous function** stored in a variable.
+
+### Arrow Function
+
+To convert a function expression into an arrow function:
+
+```typescript
+let sum = (a: number, b: number): number => {
+  return a + b;
+};
+```
+
+- The `function` keyword is removed.
+- Parentheses contain parameters.
+- An **arrow (`=>`)** separates parameters from the function body.
+
+You call the arrow function the same way as a normal function:
+
+```typescript
+console.log(sum(5, 6)); // 11
+```
+
+---
+
+## Arrow Function with No Return Value
+
+If a function does not return anything, you can specify `void` as the return type:
+
+```typescript
+let greet = (): void => {
+  console.log("Arrow function called");
+};
+```
+
+- The function can be invoked in the same way:
+
+```typescript
+greet(); // Arrow function called
+```
+
+---
+
+## Arrow Function with Single Line
+
+If the function contains a **single expression**, you can simplify it further:
+
+```typescript
+let sum = (a: number, b: number): number => a + b;
+console.log(sum(4, 7)); // 11
+```
+
+- Curly brackets `{}` and `return` statement are **not needed**.
+- This syntax is **easier to read and write**.
+
+---
+
+## Advantages of Arrow Functions
+
+1.  **Concise syntax** — fewer lines of code.
+2.  **Easier readability**, especially for single-line functions.
+3.  **No issues with single-line returns** — you don’t need `{}` or `return`.
+4.  **Lexical `this` binding** — differs from traditional functions (covered in object-oriented TypeScript section).
+
+---
+
+## Common Questions
+
+**Explain the arrow function syntax:**
+
+- **No parameters, void return:**
+
+  ```typescript
+  let fn = (): void => console.log("Hello");
+  ```
+
+- **With parameters, returning a value:**
+
+  ```typescript
+  let sum = (a: number, b: number): number => a + b;
+  ```
+
+- **Single-line concise version:**
+
+  ```typescript
+  let double = (x: number): number => x * 2;
+  ```
+
+- Discuss the `this` object behavior if asked — it behaves differently than traditional functions.
+
+---
+
+# 42
+
+---
+
+# Default and Optional Parameters in TypeScript
+
+In this lecture, we are going to discuss **default and optional parameters** in TypeScript.
+
+When creating a function with parameters, sometimes you need **default values** in case no value is passed to the function. This feature was introduced in **ES6** and is fully supported in TypeScript.
+
+---
+
+## Default Parameters
+
+Let’s take an example:
+
+```typescript
+function multiply(A: number = 1, B: number = 1): number {
+  return A * B;
+}
+
+console.log(multiply()); // 1
+console.log(multiply(5, 4)); // 20
+```
+
+### How it works:
+
+- If no values are passed to `A` or `B`, they **default to 1**.
+- If values are provided, the default values are ignored.
+
+**Key points:**
+
+- Default values are specified **after the data type annotation** with an `=` sign inside the function parameter list.
+- This works for **numbers, strings**, or any data type:
+
+```typescript
+function greet(msg: string = "Hi"): string {
+  return msg;
+}
+
+console.log(greet()); // Hi
+console.log(greet("Hello")); // Hello
+```
+
+---
+
+### Default Parameters with Arrow Functions
+
+The default parameter feature also works seamlessly with **arrow functions**:
+
+```typescript
+let multiply = (A: number = 1, B: number = 1): number => A * B;
+
+console.log(multiply()); // 1
+console.log(multiply(5, 4)); // 20
+```
+
+---
+
+## Optional Parameters
+
+Sometimes, you want a parameter to **be optional**, meaning it may or may not be passed when the function is called.
+
+```typescript
+function sayHi(A: string, B?: string): void {
+  console.log(A, B);
+}
+
+sayHi("Hello"); // Hello undefined
+sayHi("Hello", "TS"); // Hello TS
+```
+
+### How it works:
+
+- The **`?` symbol** marks the parameter as optional.
+- If the parameter is not passed, its value is **`undefined`**.
+- Optional parameters are useful when you do not want TypeScript to throw an error for missing arguments.
+
+**Key points:**
+
+- Optional parameters **cannot have default values** at the same time.
+- TypeScript infers the type as a union: `string | undefined`.
+
+---
+
+## Common Questions
+
+1.  **How do you pass default values to function parameters?**
+
+    - After the data type annotation, use `=` to assign a value in the parameter list.
+
+2.  **What is the advantage of optional parameters?**
+
+    - When calling a function, TypeScript **will not throw an error** if the optional parameter is missing.
+
+---
+
+# 43
+
+---
+
+# Rest Operator in TypeScript
+
+In this lecture, we are discussing another modern JavaScript feature that is fully supported in TypeScript — the **rest operator**.
+
+This is a very useful feature for handling **multiple parameters** in a function, especially when you are unsure about the number of arguments.
+
+---
+
+## Understanding the Syntax
+
+Consider the following example:
+
+```typescript
+function test(a: number, ...b: number[]): void {
+  console.log(a);
+  console.log(b);
+}
+
+test(1, 3, 6, 8, 9);
+```
+
+### How it works:
+
+- The `...b` syntax is called the **rest operator**.
+- It collects all remaining arguments into an **array**.
+- Here, `a` will hold the first value (`1`) and `b` will hold the rest `[3, 6, 8, 9]`.
+- In TypeScript, you must annotate the **rest parameter as an array** type, e.g., `number[]`.
+
+---
+
+### Key Points
+
+- The rest operator allows **variable number of arguments** to be treated as an array.
+- The same three dots syntax is called **spread operator** when used in arrays outside function parameters.
+- This feature works exactly the same in TypeScript as in JavaScript.
+
+---
+
+## Practical Examples
+
+### 1\. Sum of Any Number of Numbers
+
+Create a function that can take any number of numeric values and return their sum:
+
+```typescript
+function sum(...numbers: number[]): number {
+  let total = 0;
+  for (let i = 0; i < numbers.length; i++) {
+    total += numbers[i];
+  }
+  return total;
+}
+
+console.log(sum(4, 5, 6)); // 15
+console.log(sum(1, 60, 10)); // 71
+```
+
+- Here, `numbers` is a **rest parameter** and is treated as an array.
+- You can iterate over it or use array methods like `reduce()` to calculate the sum.
+
+---
+
+### 2\. Display Any Number of Names
+
+Create a function that takes any number of string arguments and displays them **separated by a comma**:
+
+```typescript
+function showNames(...names: string[]): void {
+  console.log(names.join(","));
+}
+
+showNames("first", "second"); // first,second
+showNames("third"); // third
+```
+
+- Here, `names` is a string array created by the rest operator.
+- The `join(',')` method combines the elements into a single string separated by commas.
+
+---
+
+### Summary
+
+- The **rest operator (`...`)** allows functions to accept **any number of parameters**.
+- In TypeScript, rest parameters **must be typed as arrays**.
+- Useful for scenarios like summing numbers or listing values dynamically.
+- Works seamlessly with both numbers and strings.
+
+---
+
+# 44
+
+---
+
+# Function Types in TypeScript
+
+In this lecture, we are discussing a very important concept called **function types**, which has been mentioned multiple times throughout our TypeScript discussions.
+
+Function types are crucial when you want to **define the signature of a function** that a variable will hold.
+
+---
+
+## Understanding Function Types
+
+So far, we have seen various ways to work with functions, including **function expressions**, where we assign an anonymous function to a variable:
+
+```typescript
+let sum = function (x: number, y: number): number {
+  return x + y;
+};
+```
+
+- Here, `sum` is a variable pointing to an anonymous function.
+- The function has **two numeric parameters** and returns a **numeric value**.
+- `sum` itself acts as a reference to this function.
+
+---
+
+## Assigning Functions to Variables
+
+You can also assign a function to another variable:
+
+```typescript
+function sumFunction(a: number, b: number): number {
+  return a + b;
+}
+
+let calculator: any = sumFunction;
+console.log(calculator(5, 6)); // 11
+```
+
+- Initially, `calculator` is of type `any`, so you can assign anything to it.
+- If you assign a numeric value like `6`, TypeScript will highlight an error when trying to call it as a function:
+
+```typescript
+calculator = 6; // Error: Type 'number' has no call signatures
+```
+
+This is where **function types** become handy.
+
+---
+
+## Defining Function Types
+
+You can define a variable to **only hold a function with a specific signature**:
+
+```typescript
+let calculator: (x: number, y: number) => number;
+
+calculator = sumFunction; // ✅ Works because sumFunction matches the signature
+calculator = 6; // ❌ Error: Type 'number' is not assignable to type 'function'
+```
+
+- Here, `calculator` is explicitly typed as a function taking **two numbers** and returning a **number**.
+- TypeScript ensures that no other type can be assigned.
+
+---
+
+## Function Types with Anonymous Functions
+
+You can also directly use function types with anonymous functions:
+
+```typescript
+let sum: (x: number, y: number) => number = function (
+  x: number,
+  y: number
+): number {
+  return x + y;
+};
+
+console.log(sum(5, 6)); // 11
+```
+
+- The **type annotation** `(x: number, y: number) => number` ensures that only a function matching this signature can be assigned to `sum`.
+
+---
+
+## Example with Strings
+
+Function types also work for functions returning other types:
+
+```typescript
+let fullName: (firstName: string, lastName: string) => string = function (
+  fName: string,
+  lName: string
+): string {
+  return fName + lName;
+};
+
+console.log(fullName("A", "B")); // AB
+```
+
+- Here, `fullName` is typed to **accept two strings** and **return a string**.
+- This enforces **type safety** and avoids accidental assignments of incompatible values.
+
+---
+
+## Key Points
+
+- **Function types** define the **signature** of a function before assigning it to a variable.
+- They ensure that only functions matching the defined **parameters and return type** can be assigned.
+- Helps in avoiding errors like assigning a number or string to a variable that should hold a function.
+
+---
+
+### Relative Question
+
+**Q:** What is a function type in TypeScript?
+
+**A:** A function type defines the **signature of a function** for a variable. It specifies **what parameters the function should accept and what type it should return**, ensuring type safety when assigning functions to variables.
+
+---
+
+🎯 **Play, Watch, Learn & Practice TypeScript basics to advanced concepts — and crack any interview!**
+
+---
+
+# 45
+
+---
+
+# Function Overloading in TypeScript
+
+Another important concept in TypeScript is **function overloading**.
+
+Function overloading is a common feature in many programming languages, and TypeScript fully supports it.
+
+In contrast, JavaScript does not need explicit function overloading due to its dynamic nature.
+
+---
+
+## What is Function Overloading?
+
+Function overloading allows you to define **multiple signatures** for a function with the same name, but different parameter types or numbers of parameters.
+
+Depending on the type of arguments passed, the appropriate function signature is applied.
+
+---
+
+## Syntax and Example
+
+Let's create an `add` function that can accept either numbers or strings:
+
+```typescript
+// Function overload signatures
+function add(a: number, b: number): number;
+function add(a: string, b: string): string;
+
+// Actual function implementation
+function add(a: any, b: any): any {
+  return a + b;
+}
+
+// Calling the function with numbers
+console.log(add(5, 6)); // 11
+
+// Calling the function with strings
+console.log(add("hi", " there")); // hi there
+```
+
+---
+
+### Explanation
+
+1.  **Overload Signatures**:
+
+```typescript
+function add(a: number, b: number): number;
+function add(a: string, b: string): string;
+```
+
+- These define the **different ways the function can be called**.
+- The first signature handles **numbers**, the second handles **strings**.
+- These are called **overload declarations**.
+
+2.  **Implementation Signature**:
+
+```typescript
+function add(a: any, b: any): any {
+  return a + b;
+}
+```
+
+- This is the **actual function definition** that handles all cases.
+- The `any` type is used to allow **flexible input types**.
+- The `+` operator works for both **addition** (numbers) and **concatenation** (strings).
+
+3.  **Function Calls**:
+
+```typescript
+console.log(add(5, 6)); // Outputs: 11
+console.log(add("hi", " there")); // Outputs: hi there
+```
+
+- TypeScript checks the call against the **overload signatures**.
+- Proper type checking ensures that your function behaves correctly based on the arguments passed.
+
+---
+
+### Key Points
+
+- Function overloading allows a single function name to handle **different types or numbers of parameters**.
+- TypeScript uses **overload signatures** to define possible input-output types.
+- The **actual function implementation** is flexible (often using `any`) to handle all overloads.
+- Helps in **type safety** while still supporting versatile function behavior.
+
+---
+
+### Relative Question
+
+**Q:** How do you overload a function in TypeScript?
+
+**A:** By defining multiple **overload signatures** with different parameter types or counts, and then providing a **single implementation** that handles all cases.
+
+---
