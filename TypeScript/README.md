@@ -6061,3 +6061,449 @@ console.log(add("hi", " there")); // Outputs: hi there
 **A:** By defining multiple **overload signatures** with different parameter types or counts, and then providing a **single implementation** that handles all cases.
 
 ---
+
+# 46
+
+---
+
+# Understanding Enums in TypeScript
+
+In this section, we are discussing **Enums** in TypeScript, also known as **enumerations**.
+
+An **enum** allows you to define **named constants**, which are a collection of fixed values.
+
+> **Note:** Do not confuse enums with `const` variables. While `const` defines a single constant value, enums are a **group of related constants**.
+
+---
+
+## What is an Enum?
+
+- An **enum** is a way to give more friendly names to sets of numeric or string values.
+- Enums can be **numeric**, **string**, or **heterogeneous** (mix of numbers and strings).
+- They help reduce errors and make code more readable by providing **auto-completion suggestions** in editors.
+
+---
+
+## Numeric Enum Example
+
+```typescript
+enum Workdays {
+  Monday,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+}
+
+console.log(Workdays); // {0: "Monday", 1: "Tuesday", 2: "Wednesday", ...}
+console.log(Workdays.Monday); // 0
+```
+
+- By default, enum values are **numeric**, starting from `0` and incrementing automatically.
+- Advantages:
+
+  - Auto-incremented numeric values
+  - Editor suggestions reduce typos
+  - Meaningful names improve readability
+
+---
+
+### Custom Numeric Values
+
+```typescript
+enum Workdays {
+  Monday = 1,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+}
+
+console.log(Workdays.Monday); // 1
+console.log(Workdays.Tuesday); // 2 (auto-incremented from 1)
+```
+
+- You can start from any number.
+- Auto-increment continues from the **last assigned value**.
+
+---
+
+### Individual Numeric Assignment
+
+```typescript
+enum Workdays {
+  Monday = 1,
+  Tuesday = 3,
+  Wednesday,
+  Thursday,
+  Friday,
+}
+
+console.log(Workdays.Wednesday); // 4
+```
+
+- Monday is `1`, Tuesday is `3`.
+- Wednesday automatically becomes `4` (incremented from the last assigned value).
+
+---
+
+## String Enum Example
+
+```typescript
+enum Workdays {
+  Monday = "Monday",
+  Tuesday = "Tuesday",
+  Wednesday = "Wednesday",
+}
+
+console.log(Workdays.Monday); // "Monday"
+```
+
+- String enums assign **custom string values** to each member.
+- There is **no automatic numeric assignment** with string enums.
+
+---
+
+## Heterogeneous Enum Example
+
+```typescript
+enum Workdays {
+  Monday = 1,
+  Tuesday = "Tuesday",
+  Wednesday = "Wednesday",
+}
+
+console.log(Workdays.Monday); // 1
+console.log(Workdays.Tuesday); // "Tuesday"
+```
+
+- You can mix **numbers and strings** in a single enum.
+- TypeScript allows this flexibility, though it’s generally recommended to stick to **one type**.
+
+---
+
+## Advantages of Enums
+
+1.  **Reduces errors**: Auto-completion in editors prevents typos.
+2.  **Named constants**: Makes code more readable and meaningful.
+3.  **Compile-time existence**: Enums exist at compile-time and don’t allocate extra memory.
+4.  **Flexible assignment**: Can be numeric, string, or heterogeneous.
+
+---
+
+## Common Questions
+
+**Q1:** What is an enum and how do you create it in TypeScript?  
+**A:** An enum is a collection of named constants. Use the `enum` keyword to define numeric, string, or heterogeneous enums.
+
+**Q2:** Explain the advantages of enums.  
+**A:** Enums provide readable constants, reduce errors with editor suggestions, and can represent multiple values with meaningful names.
+
+**Q3:** What will be the value of `Wednesday`?
+
+```typescript
+enum Workdays {
+  Monday = 1,
+  Tuesday = 3,
+  Wednesday,
+  Thursday,
+  Friday,
+}
+```
+
+**A:**
+
+- Monday = 1
+- Tuesday = 3
+- Wednesday = 4 (auto-increment from last assigned value)
+- Thursday = 5
+- Friday = 6
+
+---
+
+# 47
+
+---
+
+# Understanding Computed Enum Members in TypeScript
+
+In the previous lecture, we learned about **enums** and their basic usage.
+
+- All the examples we saw had **fixed values** assigned to enum members.
+- For example:
+
+```typescript
+enum Workdays {
+  Monday, // 0
+  Tuesday, // 1
+  Wednesday, // 2
+  Thursday, // 3
+  Friday, // 4
+}
+```
+
+- You can also start enums from a custom number:
+
+```typescript
+enum Workdays {
+  Monday = 1, // 1
+  Tuesday, // 2
+  Wednesday, // 3
+  Thursday, // 4
+  Friday, // 5
+}
+```
+
+- You can even assign specific numbers individually:
+
+```typescript
+enum Workdays {
+  Monday = 1,
+  Tuesday = 3,
+  Wednesday, // 4
+  Thursday, // 5
+  Friday, // 6
+}
+```
+
+- All these values are **constants**—fixed at compile time.
+
+---
+
+## What are Computed Enum Members?
+
+TypeScript also allows **dynamic values** in enums.  
+These are called **computed enum members**, where the value is **calculated or derived** instead of being a constant.
+
+---
+
+### Example 1: Using a Function as Enum Member
+
+```typescript
+enum AppData {
+  AppVersion = 1.0, // constant
+  DT = Date.now(), // computed value
+}
+
+console.log(AppData.AppVersion); // 1
+console.log(AppData.DT); // e.g., 1734234234234
+```
+
+- `AppVersion` is a fixed value.
+- `DT` is computed dynamically using `Date.now()`.
+- You can convert it to a readable date format if needed.
+
+---
+
+### Example 2: Computed Values Using Functions
+
+```typescript
+let a: number = 5;
+let b: number = 6;
+
+enum Results {
+  Sum = sum(a, b), // computed
+  Prod = prod(a, b), // computed
+}
+
+function sum(x: number, y: number): number {
+  return x + y;
+}
+
+function prod(x: number, y: number): number {
+  return x * y;
+}
+
+console.log(Results.Sum); // 11
+console.log(Results.Prod); // 30
+```
+
+- Here, `Sum` and `Prod` are **computed enum members**.
+- Instead of assigning constants, we call functions to calculate values dynamically.
+
+---
+
+## Key Takeaways
+
+1.  **Computed enum members** allow you to assign values dynamically.
+2.  You can call a function or perform a calculation to assign an enum member.
+3.  This provides **flexibility** compared to constant enum members.
+4.  Computed values are **evaluated at runtime**, unlike constant enum members which are fixed at compile time.
+
+---
+
+# 48
+
+---
+
+# Enum Reverse Mapping in TypeScript
+
+When working with **enums** in TypeScript, there is an important behavior called **reverse mapping**.
+
+---
+
+## Example: Numeric Enum
+
+```typescript
+enum Workdays {
+  Monday,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+}
+```
+
+- By default, numeric enums start from `0` and increment automatically.
+- When this TypeScript enum is compiled to JavaScript, the generated code **includes reverse mapping**.
+
+  - This means you can get the value from the enum member name.
+  - You can also get the enum member name from its numeric value.
+
+---
+
+### Accessing Enum Members
+
+```typescript
+console.log(Workdays.Wednesday); // Output: 2
+console.log(Workdays["Wednesday"]); // Output: 2
+console.log(Workdays.Friday); // Output: 4
+```
+
+- Both `Workdays.Wednesday` and `Workdays["Wednesday"]` return the numeric value.
+- This demonstrates **forward mapping** (name → value) and **reverse mapping** (value → name) in numeric enums.
+
+---
+
+## How Reverse Mapping Works
+
+- When compiled, enums are transformed into **JavaScript objects**.
+- The object stores:
+
+  1.  **Forward mapping**: name → value
+  2.  **Reverse mapping**: value → name
+
+```javascript
+// Example of compiled enum object
+{
+  0: "Monday",
+  1: "Tuesday",
+  2: "Wednesday",
+  3: "Thursday",
+  4: "Friday",
+  Monday: 0,
+  Tuesday: 1,
+  Wednesday: 2,
+  Thursday: 3,
+  Friday: 4
+}
+```
+
+- This is why you can access the enum both ways.
+
+---
+
+## Important Note About String Enums
+
+- **Reverse mapping does not work for string enums**.
+
+```typescript
+enum Workdays {
+  Monday = "Monday",
+  Tuesday = "Tuesday",
+  Wednesday = "Wednesday",
+}
+
+console.log(Workdays.Monday); // "Monday"
+console.log(Workdays["Monday"]); // undefined
+```
+
+- When enum values are strings, only the **forward mapping** exists.
+- This is a key distinction when using enums in TypeScript.
+
+---
+
+### Summary
+
+1.  Numeric enums provide **reverse mapping** automatically.
+2.  You can access enum members by **name** or by **numeric value**.
+3.  Reverse mapping **does not exist for string enums**.
+4.  Enums are compiled into **JavaScript objects** storing both mappings for numeric enums.
+
+---
+
+# 49
+
+---
+
+# Constant Enums and Ambient Enums in TypeScript
+
+In this section, we discuss two important enum concepts in TypeScript: **constant enums** and **ambient enums**.
+
+---
+
+## 1\. Constant Enums (`const enum`)
+
+- Regular enums in TypeScript generate additional JavaScript code during compilation.
+- Sometimes, this generated code can be unnecessarily large, even for simple enums.
+- To reduce the compiled code size, you can declare the enum as `const`.
+
+### Example: Regular Enum vs Constant Enum
+
+```typescript
+enum Workdays {
+  Monday,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+}
+
+let weekStart = [Workdays.Monday, Workdays.Tuesday];
+```
+
+- In the above code, compiling it generates extra JavaScript code to create the enum object.
+- To reduce this overhead, declare it as a constant enum:
+
+```typescript
+const enum Workdays {
+  Monday,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+}
+
+let weekStart = [Workdays.Monday, Workdays.Tuesday];
+```
+
+- The generated JavaScript **does not include the enum object**.
+- The array `weekStart` directly contains the numeric values of the enum members.
+- ✅ This is useful when you want lighter, cleaner compiled JavaScript without extra enum code.
+
+> Note: Using `const enum` is not always necessary but is helpful for performance and reducing compiled file size.
+
+---
+
+## 2\. Ambient Enums (`declare enum`)
+
+- Ambient enums are used when the enum **already exists somewhere else** (predefined), and you just want to use it in your current TypeScript code.
+- They are declared using the `declare` keyword.
+
+### Example: Ambient Enum
+
+```typescript
+declare enum Workdays {
+  Monday,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+}
+```
+
+- This declaration does **not generate any JavaScript code**.
+- It tells TypeScript: "Assume this enum exists somewhere, and I want to reference it here."
+- ✅ Ambient enums are ideal for describing the shape of existing enum types from external libraries or other files.
+
+---
