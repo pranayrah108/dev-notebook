@@ -6507,3 +6507,2073 @@ declare enum Workdays {
 - ✅ Ambient enums are ideal for describing the shape of existing enum types from external libraries or other files.
 
 ---
+
+# 50
+
+---
+
+# Object-Oriented Approach in TypeScript
+
+In this section, we will explore the **object-oriented approach** with implementation in TypeScript.  
+The initial few lectures are with reference to JavaScript, as it is the base.
+
+We will also learn a few ES6 features used with objects, and then, from the classes lecture, we will switch to the TypeScript playground.
+
+---
+
+## The Concept of Object Literal
+
+There are many ways to create an object in JavaScript (capital “O” class object).  
+Here we are discussing the most essential way of object creation — the **object literal**.
+
+The basic idea of object creation is that we are creating a **container to bundle data pieces**.
+
+### Real-World Analogy
+
+Imagine you have a table with items like a pen, pencil, sharpener, eraser, and many more things.  
+If you want to take them from one place to another, it’s better to use a **box (container)**.
+
+Similarly, when you have different data pieces that you may want to pass to a function or to a server, you bundle the data pieces in an **object** and pass it.
+
+So, an object allows you to create a container where you can put variables and even functions.
+
+---
+
+## Example: Passing Product Data
+
+Suppose you have:
+
+- Product code
+- Product name
+- Price
+- Other fields
+
+If you want to pass this data to a function, instead of multiple parameters, you can use an object.
+
+---
+
+## Object Literal Syntax
+
+To create an object literal:
+
+```typescript
+let obj = {};
+```
+
+This means you have created an **empty object literal**.
+
+### Adding Properties
+
+```typescript
+obj.pCode = 1001;
+obj.pName = "Apple";
+```
+
+### Adding Methods
+
+You can also add functions (methods) inside the object:
+
+```typescript
+obj.getData = function () {
+  console.log(obj.pCode, obj.pName);
+};
+```
+
+---
+
+## Displaying the Object
+
+When you log the object, you will see that it displays **three members**:
+
+- Two properties: `pCode`, `pName`
+- One method: `getData`
+
+Variables inside an object are called **properties**.  
+Functions inside an object are called **methods**.
+
+---
+
+## Commonly Used Way: Defining Members Inside Object Directly
+
+Instead of creating an empty object and adding members later, the common way is to declare everything inside the object:
+
+```typescript
+let obj = {
+  pCode: 1001,
+  pName: "Apple",
+  getData() {
+    console.log(this.pCode, this.pName);
+  },
+};
+```
+
+### Key Points:
+
+- Properties are written as key-value pairs.
+- No `=` sign, instead use `:`.
+- End with `,` not `;`.
+
+---
+
+## ES6 Method Shorthand
+
+In ES6, you can define methods without `:` or the `function` keyword:
+
+```typescript
+let obj = {
+  pCode: 1001,
+  pName: "Apple",
+  getData() {
+    console.log(this.pCode, this.pName);
+  },
+};
+```
+
+This shorthand style is the same as used in **classes**.
+
+---
+
+## Nested Objects (N-Level Objects)
+
+You can also have objects inside objects:
+
+```typescript
+let obj = {
+  pCode: {
+    id: 1001,
+    part: "ABC",
+  },
+  pName: "Apple",
+};
+```
+
+Here:
+
+- `pCode` is a key.
+- The object `{ id: 1001, part: "ABC" }` is its value.
+
+So, an object literal is a **key-value pair data structure**.
+
+---
+
+## Object Literal vs JSON
+
+If you are familiar with JSON:
+
+- JSON is also a **key-value pair format**.
+- Difference: JSON requires **keys in double quotes**.
+
+JSON is derived from the object literal format.  
+Objects in JavaScript easily convert into JSON.
+
+---
+
+## Important Note: Avoid Arrow Functions Inside Objects
+
+Do not use **arrow functions** for methods in object literals, because arrow functions behave differently with `this`.  
+This topic is discussed in detail in another lecture.
+
+---
+
+## Summary
+
+- Object literals bundle variables and functions into a container.
+- Properties = variables inside object.
+- Methods = functions inside object.
+- ES6 provides a cleaner method shorthand.
+- Object literals can have nested objects.
+- They are the basis of JSON format.
+
+---
+
+# 51
+
+---
+
+# Dynamic Keys and Methods in Object Literals (ES6 & TypeScript)
+
+So now we have seen the basics of **object literal**.  
+The next point we are discussing here is:
+
+**Can we have dynamic key or method names, and how to implement that?**
+
+This is an important topic and often asked in interviews.
+
+---
+
+## Dynamic Key Values in ES6
+
+In ES6, one more facility was introduced — the ability to give **dynamic key values**.
+
+Imagine that keys like `pCode` or `pName` are not decided earlier. Maybe some data is retrieved, and then the key is decided dynamically.
+
+For example:
+
+```typescript
+let tempVar = "pCode";
+
+let obj = {
+  tempVar: 1001,
+};
+
+console.log(obj);
+```
+
+### What happens here?
+
+If you run this code, you will see:
+
+```bash
+{ tempVar: 1001 }
+```
+
+Notice that the key is literally `tempVar`, not `pCode`.  
+That’s why when you try to access `obj.pCode`, it will return `undefined`.
+
+---
+
+## The Correct Way: Using Square Brackets
+
+To make sure the **value of the variable** (`tempVar`) is treated as the key, you need to put it inside **square brackets**:
+
+```typescript
+let tempVar = "pCode";
+
+let obj = {
+  [tempVar]: 1001,
+};
+
+console.log(obj); // { pCode: 1001 }
+```
+
+Now, instead of using the word `tempVar` as the key, JavaScript/TypeScript understands that the actual key is the **value stored inside** `tempVar`, which is `"pCode"`.
+
+This is how ES6 allows us to create **dynamic keys**.
+
+---
+
+## Dynamic Method Names
+
+Not just properties, even **methods** can have dynamic names.
+
+For example:
+
+```typescript
+let part1 = "get";
+let part2 = "Data";
+
+let obj = {
+  [part1 + part2]() {
+    console.log("Dynamic method executed!");
+  },
+};
+
+obj.getData(); // Output: Dynamic method executed!
+```
+
+Here, the method name is dynamically formed by joining two values: `"get"` and `"Data"`.  
+When executed, the method name becomes `getData`.
+
+---
+
+## Why This Matters
+
+Dynamic keys and methods are useful when:
+
+- The key names come from **user input** or **API data**.
+- You want to **programmatically generate** property or method names.
+- You are dealing with **flexible structures** that are not known at compile-time.
+
+---
+
+## Summary
+
+- By default, variables used as keys in objects are treated as literal names (`tempVar → "tempVar"`).
+- To make them dynamic, enclose them in **square brackets** (`[tempVar]`).
+- ES6 allows not only dynamic keys but also **dynamic method names**.
+- This feature makes object literals more powerful and flexible.
+
+---
+
+# 52
+
+---
+
+# Creating Read-Only Properties in JavaScript Objects
+
+In this lecture, we are discussing an important question:
+
+**How can we make read-only properties in an object?**
+
+For this, we are going to use the `Object` (with capital **O**) in JavaScript, which provides powerful methods to configure object properties.
+
+---
+
+## Using `Object.defineProperty`
+
+JavaScript gives us a method called `defineProperty`, which belongs to the global `Object` class.
+
+The syntax looks like this:
+
+```typescript
+Object.defineProperty(obj, propertyName, propertyDescriptor);
+```
+
+- `obj` → the object on which you want to define the property.
+- `propertyName` → the name of the property.
+- `propertyDescriptor` → the configuration for the property.
+
+---
+
+## Example: Defining a Property with Attributes
+
+Let’s try a sample code:
+
+```typescript
+let proto = {};
+
+Object.defineProperty(proto, "pCode", {
+  value: 2001,
+  writable: true,
+  configurable: true,
+});
+
+const obj = Object.create(proto);
+
+console.log(obj.pCode); // 2001
+
+obj.pCode = 3001; // Changing value
+console.log(obj.pCode); // 3001
+```
+
+Here:
+
+- `value` → sets the initial value of the property.
+- `writable: true` → allows changing the value.
+- `configurable: true` → allows modifying or deleting the property later.
+
+---
+
+## Making a Property Read-Only
+
+Now, let’s change the setting for `writable`:
+
+```typescript
+let proto = {};
+
+Object.defineProperty(proto, "pCode", {
+  value: 2001,
+  writable: false, // ❌ Not writable
+  configurable: true,
+});
+
+const obj = Object.create(proto);
+
+console.log(obj.pCode); // 2001
+
+obj.pCode = 3001; // Trying to change value
+console.log(obj.pCode); // 2001 (unchanged)
+```
+
+Even though we tried to assign `3001`, the value remained `2001` because we set **writable: false**.  
+This makes the property **read-only**.
+
+---
+
+## Behavior in Strict Mode
+
+- If you run this in **non-strict mode**, JavaScript will silently ignore the assignment (no error, value remains unchanged).
+- If you run this in **strict mode**, JavaScript will throw an error when you try to change a read-only property.
+
+This ensures better debugging and prevents accidental modifications.
+
+---
+
+## Summary
+
+- Use **`Object.defineProperty`** to configure object properties.
+- Property descriptors include:
+
+  - `value` → the property’s value.
+  - `writable` → whether the value can be changed.
+  - `configurable` → whether the property itself can be redefined or deleted.
+
+- Setting **writable: false** makes a property **read-only**.
+- In strict mode, attempting to modify read-only properties throws an error.
+
+---
+
+# 53
+
+---
+
+# Object Reference vs Clone Creation in JavaScript
+
+In this lecture, we are discussing an important concept with a common interview question:
+
+**What will be the output of this code?**
+
+---
+
+## Assigning Objects: By Reference
+
+Let’s try this code:
+
+```typescript
+let obj = { a: "first" };
+let obj1 = obj;
+
+obj1.a = "second";
+
+console.log(obj.a); // ?
+console.log(obj1.a); // ?
+```
+
+### What happens here?
+
+- When you assign `obj1 = obj`, the **reference of the object** is passed.
+- No new copy is created.
+- Both `obj` and `obj1` point to the **same memory location**.
+
+So when you modify `obj1.a`, it also changes `obj.a`.
+
+**Output:**
+
+```sql
+second
+second
+```
+
+---
+
+## Why Does This Happen?
+
+You can imagine that property `a` is stored at a memory address, and both `obj` and `obj1` are referring to the **same address**.
+
+That’s why whether you use `obj.a` or `obj1.a`, both point to the same location.
+
+👉 **In short: assigning an object does not create a clone; it only copies the reference.**
+
+---
+
+## How to Create a Clone of an Object
+
+If you want a completely separate copy (a clone), assignment is not enough.
+
+### Option 1: Manually Copy Properties
+
+You could loop through all keys of the object and copy them one by one into a new object. But that’s not efficient.
+
+### Option 2: Using `Object.assign` (ES6)
+
+ES6 introduced a simpler way with `Object.assign`:
+
+```typescript
+let obj = { a: "first" };
+
+let obj1 = Object.assign({}, obj);
+
+obj1.a = "second";
+
+console.log(obj.a); // first
+console.log(obj1.a); // second
+```
+
+Now:
+
+- `obj` and `obj1` are separate objects.
+- Changing `obj1.a` does **not** affect `obj.a`.
+
+**Output:**
+
+```sql
+first
+second
+```
+
+---
+
+## Summary
+
+- Assigning one object to another (`obj1 = obj`) copies the **reference**, not the object.
+- Both variables will point to the same object in memory.
+- To create a **clone (separate copy)**, use:
+
+  - `Object.assign({}, obj)`
+  - Or loop through properties manually.
+
+- ES6 `Object.assign` makes cloning much easier and avoids reference issues.
+
+---
+
+# 54
+
+---
+
+# Understanding the `this` Object in JavaScript & TypeScript
+
+Now let's understand the **`this` object**, without which you can't imagine any JavaScript or TypeScript program.
+
+The definition of this object is that it contains the **current context**. The value of `this` can change depending on where it is placed.
+
+---
+
+## `this` in the Browser Global Scope
+
+Let's check one simple example in the browser window.
+
+```javascript
+console.log(this);
+```
+
+If you run this in the browser, it displays the **window object** by default.
+
+👉 The reason is that `this` refers to the **current context**, and in this case, the current context is the `window` object, since it is the global object in the browser.
+
+---
+
+## `this` Inside a Function
+
+Now let’s put this statement inside a function:
+
+```javascript
+function test() {
+  console.log(this);
+}
+test();
+```
+
+The output is still the **window object**.
+
+👉 Why? Because the test function is actually part of the window object, and window is the global object.
+
+For example:
+
+```javascript
+window.a = 5;
+
+function test() {
+  console.log(this.a);
+}
+test();
+```
+
+Output: `5`.
+
+Here, `this` points to the `window` object, and hence accesses the property `a` that we set earlier.
+
+---
+
+## `this` Inside an Object Literal
+
+Now let’s shift `this` into an **object literal**:
+
+```javascript
+const obj = {
+  test: function () {
+    console.log(this);
+  },
+};
+
+obj.test();
+```
+
+Output: `obj`.
+
+👉 This time, the test function is part of the `obj` literal, so `this` correctly refers to `obj`.
+
+---
+
+## `this` in Arrow Functions
+
+Now let’s see what happens if we use an arrow function:
+
+```javascript
+const obj = {
+  test: () => {
+    console.log(this);
+  },
+};
+
+obj.test();
+```
+
+Output: `window`.
+
+Earlier, with a traditional function, `this` pointed to `obj`. But with an **arrow function**, it pointed to the global `window` object.
+
+👉 Why? Because the arrow function does **not** bind its own `this`. Instead, it inherits `this` from its surrounding scope. In the above case, the surrounding scope is the global scope, hence `window`.
+
+---
+
+## Why Does `this` Work Differently in Arrow Functions?
+
+Earlier, traditional functions also acted like classes, so they had to manage their own `this` binding.
+
+Arrow functions, however, don’t behave like classes and don’t need to handle `this`. Instead, they simply use the `this` from where they were defined.
+
+That’s why you should be careful when using arrow functions inside objects.
+
+---
+
+## Common Interview Questions
+
+### 1\. What will be the output of this code and why?
+
+```javascript
+function test() {
+  console.log(this);
+}
+test();
+```
+
+👉 Output: `window`.  
+Reason: The current context is the global object, i.e., the `window` in browsers.
+
+---
+
+### 2\. What is the context of `this` inside an arrow function?
+
+```javascript
+const obj = {
+  test: () => {
+    console.log(this);
+  },
+};
+obj.test();
+```
+
+👉 Output: `window` (in browser).  
+Reason: Arrow functions do not bind their own `this`. Instead, they refer to the global object.
+
+If this same code runs in **Node.js**, then `this` will point to the **global object in Node** (not `window`, but Node’s own global wrapper).
+
+---
+
+## Key Takeaways
+
+- `this` refers to the **current context**.
+- In the **global scope (browser)** → `this` refers to `window`.
+- Inside a **function** → still refers to `window` unless bound otherwise.
+- Inside an **object method (traditional function)** → refers to the object.
+- Inside an **object method (arrow function)** → refers to the global object instead.
+
+---
+
+# 55
+
+---
+
+# Understanding Classes in TypeScript
+
+In this lecture, we are going to discuss **how to work with classes in TypeScript**.
+
+Classes are the base entity of object-oriented programming (OOP). TypeScript supports classes very well. Unlike JavaScript ES5 (which did not have the `class` keyword), ES6 introduced it, making object-oriented programming much simpler.
+
+Classes are nothing but **designs or blueprints**.
+
+---
+
+## Class as a Blueprint
+
+Think of designing a **car**.
+
+- On paper, you create a design — this is the **blueprint**.
+- That design is your **class** in programming.
+- The **real cars** manufactured from that blueprint are the **objects or instances** of the class.
+
+A car may have different properties like `height`, `width`, `numberOfSeats`, or even `color`. These data values define the **appearance of the object**, and are called **properties**.
+
+Actions like `start`, `drive`, or `stop` are called **methods** because they **act on the object**.
+
+So:
+
+- **Class** → Blueprint
+- **Object/Instance** → Real implementation based on the blueprint
+- **Properties** → Data (e.g., color, seats)
+- **Methods** → Behavior (e.g., drive, stop)
+
+---
+
+## Syntax to Create a Class in TypeScript
+
+Here’s a simple example of creating a class:
+
+```typescript
+class Car {
+  color: string;
+  seats: number;
+
+  constructor(c: string, ns: number) {
+    this.color = c;
+    this.seats = ns;
+    console.log("Constructor called");
+  }
+
+  buildCar() {
+    console.log(`Car built with color: ${this.color}, seats: ${this.seats}`);
+  }
+}
+
+// Creating objects (instances) of Car
+const car1 = new Car("Red", 2);
+const car2 = new Car("Blue", 4);
+
+car1.buildCar(); // Car built with color: Red, seats: 2
+car2.buildCar(); // Car built with color: Blue, seats: 4
+```
+
+---
+
+## Members of a Class
+
+Anything you place inside a class is called a **member**.  
+In the above example:
+
+- **Properties** → `color`, `seats`
+- **Constructor** → Automatically called when an object is created
+- **Method** → `buildCar()`
+
+So this class has **four members**:  
+2 properties, 1 constructor, and 1 method.
+
+---
+
+## The Role of the Constructor
+
+A **constructor** is a special method that:
+
+- Is automatically called when an object is created using the `new` keyword.
+- Can accept parameters to initialize properties of the class.
+
+For example:
+
+```typescript
+const car1 = new Car("Red", 2);
+```
+
+Here, `"Red"` and `2` are passed to the constructor and assigned to the object’s properties.
+
+---
+
+## Accessing Class Members
+
+There are two ways to access members:
+
+1.  **Outside the class (using object reference):**
+
+    ```typescript
+    console.log(car1.color); // Red
+    console.log(car2.seats); // 4
+    ```
+
+2.  **Inside the class (using `this` keyword):**
+
+    ```typescript
+    buildCar() {
+      console.log(`Color: ${this.color}, Seats: ${this.seats}`);
+    }
+    ```
+
+    The keyword **`this`** always refers to the **current object instance**.
+
+    - For `car1`, `this` refers to `car1`.
+    - For `car2`, `this` refers to `car2`.
+
+---
+
+## Quick Interview Questions
+
+1.  **How do you create a class in TypeScript?**  
+    → Use the `class` keyword, declare members, and optionally add a constructor.
+2.  **What is a constructor and how is it called?**  
+    → It is a special method automatically invoked when you create an object with `new`.
+3.  **How do you access members of a class?**  
+    → Use `objectName.memberName` outside the class, or `this.memberName` inside the class.
+4.  **What do you mean by a member of a class?**  
+    → Properties, methods, and constructors are all members of a class.
+
+---
+
+## Final Thoughts
+
+Classes in TypeScript allow you to organize code around **data (properties)** and **behavior (methods)**.
+
+- The **blueprint (class)** defines what objects look like.
+- The **instances (objects)** bring those blueprints to life with specific values.
+
+Understanding classes, constructors, and the `this` keyword lays the foundation for working with advanced OOP features like **inheritance, interfaces, and access modifiers** in TypeScript.
+
+---
+
+# 56
+
+---
+
+# Understanding Inheritance in TypeScript
+
+So now we are going to talk about **inheritance** in this lecture.
+
+You already know the syntax of class creation with various types of members. That is, you create the property, method or even constructor.
+
+TypeScript does allow various object-oriented patterns to implement. One of the most common patterns is **inheritance**, also known as **Subclassing**.
+
+---
+
+## Inheritance in ES6 and TypeScript
+
+ES5 had many ways to implement inheritance with constructor function, but in **ES6 it's even easier**. You just use the **extends** keyword to inherit a class.
+
+### Example:
+
+```ts
+class A {
+  Pmethod() {
+    console.log("parent method called");
+  }
+}
+
+class B extends A {}
+
+let cobj = new B();
+cobj.Pmethod(); // parent method called
+```
+
+As you can see, even though `B` doesn’t have any members, the method of class `A` is available because of inheritance.
+
+---
+
+## Adding Members in Child Class
+
+Now, let’s add one method to the child class:
+
+```ts
+class A {
+  Pmethod() {
+    console.log("parent method called");
+  }
+}
+
+class B extends A {
+  Cmethod() {
+    console.log("child method called");
+  }
+}
+```
+
+Now the child object has **two methods**: one from parent class and another from child class.
+
+---
+
+## Constructors and Super
+
+When we deal with **constructors**, things are a bit different.
+
+If the parent class has a constructor and the child also defines one, the child **must call `super()`** to invoke the parent constructor.
+
+```ts
+class A {
+  constructor() {
+    console.log("parent constructor called");
+  }
+}
+
+class B extends A {
+  constructor() {
+    super(); // required
+    console.log("child constructor called");
+  }
+}
+```
+
+⚠️ Without `super()`, it won’t compile in TypeScript or JavaScript.
+
+---
+
+## Practical Example: Vehicle Inheritance
+
+Let’s create a **Vehicle class** and extend it into `Car` and `Motorbike`.
+
+```ts
+class Vehicle {
+  color: string;
+  vehicleType: string;
+  seats: number;
+
+  constructor(c: string, vt: string, seats: number) {
+    this.color = c;
+    this.vehicleType = vt;
+    this.seats = seats;
+  }
+
+  buildVehicle() {
+    console.log(
+      `Color: ${this.color}, Type: ${this.vehicleType}, Seats: ${this.seats}`
+    );
+  }
+}
+
+class Car extends Vehicle {
+  constructor(c: string) {
+    super(c, "Car", 4);
+  }
+}
+
+class Motorbike extends Vehicle {
+  constructor(c: string) {
+    super(c, "Motorbike", 2);
+  }
+}
+
+// Usage
+let cobj = new Car("Red");
+let mobj = new Motorbike("Silver");
+
+cobj.buildVehicle(); // Red Car with 4 seats
+mobj.buildVehicle(); // Silver Motorbike with 2 seats
+```
+
+---
+
+## Key Questions
+
+### 1\. How do you inherit a class?
+
+By using the `extends` keyword. All members of the parent and child class are accessible with the object of the child class.
+
+### 2\. Why do you need the `super()` method?
+
+Whenever we have constructors in both parent and child class, the child’s constructor **must call the parent’s constructor** using `super()`.  
+This allows parameter passing and proper initialization of inherited members.
+
+---
+
+## Summary
+
+- Inheritance in TypeScript is implemented using **extends**.
+- Methods and properties of parent are available in child class objects.
+- Constructors in child classes **must call `super()`** to initialize parent class.
+- Practical example shows how `Vehicle` can be extended into `Car` and `Motorbike`.
+
+---
+
+# 57
+
+---
+
+# Understanding Access Modifiers in TypeScript (OOP)
+
+Another important concept of object-oriented programming is the **access modifier**.
+
+There are various modifiers used in classes like **public, private, and protected**.
+
+When you declare a method or a property inside a class, you have a provision to decide the **scope** of it — that is, the **accessibility of members** (methods or properties).
+
+---
+
+## Example: Access Modifiers in Action
+
+Let’s practically see how it works.
+
+We declare a class called `Vehicle` which will have two properties:
+
+- `color` (string)
+- `numberOfSeats` (number)
+
+And a method called `buildVehicle` that will display their values.
+
+```ts
+class Vehicle {
+  color: string;
+  numberOfSeats: number;
+
+  buildVehicle() {
+    console.log(this.color, this.numberOfSeats);
+  }
+}
+
+let obj = new Vehicle();
+obj.color = "Red";
+obj.numberOfSeats = 4;
+obj.buildVehicle(); // Output: Red 4
+```
+
+So far, we accessed and set properties **outside the class** and everything worked fine.
+
+---
+
+## Why Do We Need Modifiers?
+
+The issue arises when you want to put **validations** inside the class.
+
+For example, assume:
+
+- `color` must be from a specific set of allowed values.
+- `numberOfSeats` must fall within a valid range.
+
+If users can freely set these properties outside the class, they can **bypass validations**, breaking your object’s logic.
+
+That’s where **access modifiers** help.
+
+---
+
+## Public Modifier
+
+By default, class members in TypeScript are **public**.
+
+- They can be accessed **inside and outside** the class.
+- You don’t even need to explicitly write `public` (but you can if you want).
+
+Example:
+
+```ts
+class Vehicle {
+  public seats: number;
+  public color: string;
+}
+```
+
+Even if you omit `public`, it’s the same.
+
+---
+
+## Private Modifier
+
+If you want to restrict access **only inside the class**, use `private`.
+
+```ts
+class Vehicle {
+  private color: string;
+  private seats: number;
+
+  buildVehicle() {
+    console.log(this.color, this.seats);
+  }
+}
+
+let obj = new Vehicle();
+obj.color = "Red"; // ❌ Error: Property 'color' is private
+```
+
+Now `color` and `seats` are not accessible outside the class.
+
+Even methods can be private if you want **internal helper methods** hidden from the user.
+
+---
+
+## Protected Modifier
+
+The **protected** modifier is similar to private, with one key difference:
+
+- **Private** → Accessible **only inside the class**.
+- **Protected** → Accessible inside the class **and its subclasses**.
+
+Example:
+
+```ts
+class Vehicle {
+  protected color: string = "Red";
+  public seats: number = 4;
+}
+
+class Car extends Vehicle {
+  showData() {
+    console.log(this.color); // ✅ Accessible in subclass
+  }
+}
+
+let car = new Car();
+car.showData(); // Output: Red
+car.color; // ❌ Error: 'color' is protected
+```
+
+So, `protected` gives controlled access in inheritance scenarios.
+
+---
+
+## Key Takeaways
+
+- **Public**: Accessible everywhere (default).
+- **Private**: Accessible only within the same class.
+- **Protected**: Accessible within the class and its subclasses.
+
+---
+
+## Interview-Style Questions
+
+### Q1: Explain various access modifiers of a class.
+
+We have **public, private, and protected**.
+
+- **Public**: Members are accessible everywhere. (Default)
+- **Private**: Members are accessible only within the class.
+- **Protected**: Members are accessible within the class and its subclasses.
+
+---
+
+### Q2: Which is the default access modifier?
+
+The default access modifier is **public**.
+
+---
+
+### Q3: Can you have a protected modifier without inheritance?
+
+Yes, you can. But it doesn’t make much sense because without a subclass, it behaves like `private`.  
+Still, TypeScript will not throw any errors.
+
+---
+
+🎯 **Conclusion**:  
+Use **private** when you want strict encapsulation.  
+Use **protected** when designing class hierarchies with inheritance.  
+Use **public** (default) when no restrictions are needed.
+
+---
+
+# 58
+
+---
+
+# Property Initialization Shorthand in TypeScript
+
+When working with classes in TypeScript, you often need to initialize properties inside the constructor. Normally, this requires writing separate declarations and assignments. But TypeScript gives us a much **shorter and cleaner way** to do this — called **property initialization shorthand**.
+
+---
+
+## Traditional Way of Initializing Properties
+
+Let’s start with a simple `Vehicle` class:
+
+```ts
+class Vehicle {
+  color: string;
+  seats: number;
+
+  constructor(c: string, s: number) {
+    this.color = c;
+    this.seats = s;
+  }
+
+  buildVehicle() {
+    console.log(this.color, this.seats);
+  }
+}
+
+let obj = new Vehicle("Red", 4);
+let obj1 = new Vehicle("Blue", 6);
+
+obj.buildVehicle(); // Output: Red 4
+obj1.buildVehicle(); // Output: Blue 6
+```
+
+Here’s what’s happening:
+
+- We declare properties (`color`, `seats`).
+- In the constructor, we take parameters (`c`, `s`).
+- Then we assign `this.color = c` and `this.seats = s`.
+
+This works fine. But imagine if we had **10+ properties** — our constructor would quickly get messy with a long list of assignments.
+
+---
+
+## The Shorthand Way
+
+TypeScript allows a **shorthand syntax** to avoid all those redundant property declarations and assignments.
+
+Instead of separately declaring properties and assigning them, you can declare and assign them **directly inside the constructor parameters**.
+
+Example:
+
+```ts
+class Vehicle {
+  constructor(public color: string, public seats: number) {}
+
+  buildVehicle() {
+    console.log(this.color, this.seats);
+  }
+}
+
+let obj = new Vehicle("Red", 4);
+let obj1 = new Vehicle("Blue", 6);
+
+obj.buildVehicle(); // Output: Red 4
+obj1.buildVehicle(); // Output: Blue 6
+```
+
+---
+
+### What Changed?
+
+- We removed the **explicit property declarations** (`color`, `seats`).
+- We also removed the **assignments** (`this.color = c`).
+- Instead, we wrote `public color: string` and `public seats: number` directly in the constructor parameters.
+
+This tells TypeScript:
+
+- Create a property (`color`, `seats`).
+- Assign the constructor parameter value directly to it.
+
+---
+
+## Why Do We Need Access Modifiers?
+
+There’s one important rule: when using shorthand, you **must explicitly declare the access modifier** (`public`, `private`, or `protected`).
+
+For example:
+
+```ts
+class Vehicle {
+  constructor(private color: string, public seats: number) {}
+
+  buildVehicle() {
+    console.log(this.color, this.seats);
+  }
+}
+
+let obj = new Vehicle("Red", 4);
+let obj1 = new Vehicle("Blue", 6);
+
+obj.buildVehicle(); // Output: Red 4
+obj1.buildVehicle(); // Output: Blue 6
+
+console.log(obj.color); // ❌ Error: Property 'color' is private
+```
+
+Here:
+
+- `color` is **private**, so it cannot be accessed outside the class.
+- `seats` is **public**, so it can be accessed anywhere.
+
+---
+
+## Key Advantages
+
+- Less boilerplate code (no need to repeat property declarations + assignments).
+- Cleaner and more readable classes.
+- Still fully supports encapsulation (`private`, `protected`, `public`).
+
+---
+
+## Final Thoughts
+
+The **property initialization shorthand** is one of those small but powerful features of TypeScript that saves a lot of typing.
+
+- If you have a class with many properties, use this shorthand for cleaner code.
+- Always remember: you **must explicitly specify the access modifier** (`public`, `private`, `protected`).
+
+---
+
+🎯 **Summary**: With property initialization shorthand, you’re **creating the property and assigning the value together in a single step** inside the constructor.
+
+---
+
+# 59
+
+---
+
+# Understanding the `readonly` Modifier in TypeScript
+
+In this lecture, I’m going to discuss the **readonly modifier** in TypeScript.
+
+TypeScript provides a `readonly` modifier that can be added with `public`, `private`, or `protected` access modifiers.
+
+👉 Remember, in JavaScript you don’t have such an option. However, if you want to make an object property readonly in JavaScript, you can use the `Object` class (`Object.freeze` or property descriptors). If you want to know about it, you can check my **JavaScript marathon interview question tutorial**.
+
+Now, let’s practically try to make a property `readonly` in TypeScript.
+
+---
+
+## Example: Making a Property `readonly`
+
+Let’s create a simple `Vehicle` class:
+
+```ts
+class Vehicle {
+  readonly color: string;
+  seats: number;
+
+  constructor(color: string, seats: number) {
+    this.color = color;
+    this.seats = seats;
+  }
+}
+
+const car = new Vehicle("red", 4);
+console.log(car.color); // ✅ red
+```
+
+Here, the `color` property is marked as **readonly**.
+
+Now, if I try to reassign:
+
+```ts
+car.color = "blue"; // ❌ Error: Cannot assign to 'color' because it is a read-only property
+```
+
+TypeScript immediately throws an error.
+
+That’s how you make a property **readonly**.
+
+---
+
+## How to Assign Values to a `readonly` Property
+
+Since a `readonly` property **cannot be modified later**, how do we assign values to it?
+
+You have **three valid ways**:
+
+### 1\. **Assign value during declaration**
+
+```ts
+class Vehicle {
+  readonly color: string = "red";
+}
+```
+
+### 2\. **Assign value inside the constructor**
+
+```ts
+class Vehicle {
+  readonly color: string;
+
+  constructor(c: string) {
+    this.color = c; // ✅ Allowed
+  }
+}
+
+const car = new Vehicle("blue");
+console.log(car.color); // blue
+```
+
+### 3\. **Use shorthand (property parameter syntax)**
+
+```ts
+class Vehicle {
+  constructor(readonly color: string) {}
+}
+
+const car = new Vehicle("red");
+console.log(car.color); // red
+```
+
+With this shorthand, you don’t need to separately declare or assign properties.
+
+---
+
+## `readonly` with Access Modifiers
+
+The `readonly` modifier can be used with:
+
+- `public readonly`
+- `private readonly`
+- `protected readonly`
+
+Example:
+
+```ts
+class Vehicle {
+  constructor(private readonly color: string) {}
+
+  showColor() {
+    console.log(this.color);
+  }
+}
+
+const car = new Vehicle("black");
+car.showColor(); // ✅ black
+// car.color ❌ Error: 'color' is private
+```
+
+Here, the property is **private + readonly**, meaning it can only be accessed inside the class and cannot be reassigned.
+
+---
+
+## Common Interview Question: `readonly` vs `const`
+
+A very common question is:
+
+**What is the difference between `readonly` and `const`?**
+
+- `readonly` → used **inside classes** to make properties immutable after initialization.
+- `const` → used for **variables** outside classes.
+
+So, the difference is:
+
+- Use `readonly` for **class properties**.
+- Use `const` for **variables**.
+
+---
+
+## Recap
+
+- Use `readonly` to protect properties from modification.
+- Values can only be assigned:
+
+  - at declaration,
+  - inside the constructor,
+  - or via shorthand property parameters.
+
+- Can be combined with `public`, `private`, or `protected`.
+- Difference:
+
+  - `readonly` → for class properties
+  - `const` → for variables
+
+---
+
+📌 With this, you now know how to **implement and use the `readonly` modifier in TypeScript** — a powerful tool to ensure immutability of class properties.
+
+---
+
+# 60
+
+---
+
+# Understanding Static Members in TypeScript
+
+In this lecture, I’m discussing **static members** in TypeScript.
+
+---
+
+## Static Members in JavaScript
+
+If you observe the **Math** class in JavaScript, you always use the class name itself to access methods or properties.
+
+For example:
+
+```js
+console.log(Math.PI); // Value of Pi
+console.log(Math.random()); // Random number
+```
+
+👉 Notice that in these two cases, you never instantiate the `Math` class.
+
+You don’t write:
+
+```js
+let obj = new Math(); // ❌ Not valid
+```
+
+Instead, you directly call **static members** using the class name.
+
+This is because `PI` and `random` are **static properties/methods**.
+
+---
+
+## Static Members in TypeScript
+
+When you want to create similar behavior in your own classes, you use the **`static` keyword**.
+
+Static members:
+
+- Belong to the **class itself**, not the object.
+- Can be accessed using the **class name**.
+- Do not require instantiation.
+
+---
+
+## Example: Static Property
+
+Let’s create a simple `Vehicle` class:
+
+```ts
+class Vehicle {
+  color: string; // instance property
+  static seats: number = 5; // static property
+
+  constructor(color: string) {
+    this.color = color;
+  }
+}
+
+const car = new Vehicle("red");
+
+console.log(car.color); // ✅ "red" → instance property
+// console.log(car.seats);     // ❌ Error: seats is not available on instance
+
+console.log(Vehicle.seats); // ✅ 5 → static property
+```
+
+- `color` → bound to **instance** of the class
+- `seats` → bound to the **class** itself
+
+This shows that static members do not belong to each object. Instead, they belong to the **class as a whole**.
+
+---
+
+## Key Point: One Copy Only
+
+For **instance properties**, each object has its own copy of the value.
+
+For **static properties**, there is only **one copy** of the value for the entire class.
+
+---
+
+## Example: Static Method
+
+We can also create static methods:
+
+```ts
+class Vehicle {
+  static seats: number = 5;
+
+  static printInfo() {
+    console.log(`Number of seats: ${Vehicle.seats}`);
+  }
+}
+
+Vehicle.printInfo(); // ✅ "Number of seats: 5"
+```
+
+Here, `printInfo` is called directly with the class name — no need to create an object.
+
+---
+
+## Practical Use Cases
+
+So, when do we use static members?
+
+- **Configuration values**  
+  Example: application version, application name.
+- **Utility functions**  
+  Example: services that don’t depend on object instances.
+- **Shared values**  
+  Example: counters, default settings.
+
+Just like `Math.PI` or `Math.random`, these values are tied to the class, not to individual objects.
+
+---
+
+## Common Interview Questions
+
+### 1\. How do you make a member static in a class?
+
+Use the **`static` keyword** before the property or method:
+
+```ts
+class Example {
+  static version = "1.0.0";
+  static printVersion() {
+    console.log(Example.version);
+  }
+}
+```
+
+### 2\. What is the advantage of static members?
+
+- They are **shared across all instances**.
+- They are accessible **without creating objects**.
+- Useful for **configuration values** (like app version, app name).
+- Reduce memory usage since there’s only **one copy**.
+
+---
+
+## Recap
+
+- Use `static` when a value or method belongs to the **class itself**.
+- Access static members using the **class name**, not the object.
+- Each object has its own instance properties, but static members are **common to all**.
+- Ideal for configuration, constants, and utility functions.
+
+---
+
+🎯 With this, you now understand **how to declare and use static members in TypeScript**, and when to apply them in real-world applications.
+
+---
+
+# 61
+
+---
+
+# Mastering Object Literal Destructuring in JavaScript / TypeScript
+
+Now I'm discussing a very useful concept in programming that is **destructuring of object literal**.
+
+We have already seen the concept of **Destructuring in the array section**, but I will still repeat the same thing for clarification — what is Destructuring?
+
+---
+
+## What is Destructuring?
+
+As the name _Destructuring_ says, something is getting _destructured_.  
+It also means that a structure is getting broken.
+
+A **structure** here means a _data structure_.
+
+So, **Destructuring** is a concept of breaking a data structure (like an array or object literal) into data pieces, or in other words, **individual variables**.
+
+---
+
+## Object Literal Destructuring
+
+Object Literal Destructuring will look something like this:
+
+For example, you have an object which has `PCode` and `PName` (that is, product code and product name) where we have values `1001` and `Apple`.
+
+Normally, if you want to bring product code and product name out of the structure and assign them to individual variables, then you would write:
+
+```bash
+let pCode = obj.pCode;
+let pName = obj.pName;
+```
+
+This is fine when you have only two members.  
+But when you have **more members**, it becomes a cumbersome job.
+
+Instead of this, **ES6** gives you an easier way:
+
+```bash
+let { pCode, pName } = obj;
+```
+
+Here, the **key name** and the **variable name** must be the same.  
+In this example, `pCode` and `pName` are keys in the object as well as variables.
+
+---
+
+## Practical Example
+
+```javascript
+const obj = {
+  pCode: 1001,
+  pName: "Apple",
+};
+
+let { pCode, pName } = obj;
+
+console.log(pCode); // 1001
+console.log(pName); // Apple
+```
+
+Here, the left-hand side (curly brackets) is **not an object literal**.  
+It’s just a **list of variables** we are creating. The curly brackets indicate that you are destructuring an **object literal**.
+
+👉 If it is an **array**, you would use **square brackets**.
+
+---
+
+## Destructuring with Functions
+
+We can also destructure objects **returned by functions**.
+
+```javascript
+function test() {
+  return {
+    pCode: 1001,
+    pName: "Apple",
+  };
+}
+
+let { pCode, pName } = test();
+
+console.log(pCode); // 1001
+console.log(pName); // Apple
+```
+
+This gives the same result as before.
+
+---
+
+## Default Values in Destructuring
+
+Even while destructuring, we can assign **default values**.
+
+```javascript
+const obj = {};
+
+let { pCode = 0, pName = "Unknown" } = obj;
+
+console.log(pCode); // 0 (default value since pCode not present)
+console.log(pName); // Unknown
+```
+
+If we now add values in the object:
+
+```javascript
+const obj = { pCode: 1002 };
+
+let { pCode = 0, pName = "Unknown" } = obj;
+
+console.log(pCode); // 1002 (value from object)
+console.log(pName); // Unknown (default value since not present)
+```
+
+---
+
+## Practical Scenario of Object Literal Destructuring
+
+A **very common scenario** is when you get data from a server in **JSON format**.
+
+That data is usually assigned to an object literal. But most of the time, you may not need all fields — only a few.
+
+Destructuring allows you to **pick only what you need**.
+
+Example:
+
+```javascript
+const serverResponse = {
+  id: 1,
+  username: "john_doe",
+  email: "john@example.com",
+  role: "admin",
+};
+
+let { username, email } = serverResponse;
+
+console.log(username); // john_doe
+console.log(email); // john@example.com
+```
+
+This makes code cleaner and avoids repetitive `obj.property` calls.
+
+---
+
+## Example Question
+
+**Q: Explain the output of this code.**
+
+```javascript
+let { a = 90, b } = { a: undefined };
+
+console.log(a); // ?
+console.log(b); // ?
+```
+
+- `a` → Since default value is `90`, and `a` was `undefined`, it becomes **90**.
+- `b` → No value is given, so it becomes **undefined**.
+
+👉 Output:
+
+```javascript
+90;
+undefined;
+```
+
+---
+
+## Conclusion
+
+So this is the whole concept of **destructuring**.  
+It’s a **basic yet powerful feature** of JavaScript/TypeScript that helps break down complex data structures like arrays or object literals into smaller, more manageable **variables**.
+
+Destructuring is especially helpful when working with **API responses**, **functions returning objects**, and situations where you want to make your code **short, clean, and readable**.
+
+---
+
+# 62
+
+---
+
+# Understanding Abstract Classes in Object-Oriented Programming
+
+Another important concept in object-oriented programming is **abstract classes**.
+
+Abstract classes are classes which **cannot be instantiated**. That is, you cannot create an object directly from them. Instead, they serve as a **base class** for extended classes or subclasses.
+
+---
+
+## Defining an Abstract Class
+
+The `abstract` keyword is used to declare an abstract class.
+
+For example:
+
+```ts
+abstract class Vehicle {
+  formatData() {
+    console.log("Displaying the formatted data");
+  }
+}
+```
+
+Now, if you try to instantiate this class:
+
+```ts
+const obj = new Vehicle(); // ❌ Error: Cannot create an instance of an abstract class
+```
+
+You will see that **abstract classes cannot be instantiated**.
+
+---
+
+## Extending an Abstract Class
+
+As mentioned earlier, an abstract class serves as a base class. Let’s extend it.
+
+Suppose we want to format some data — remove spaces, replace them with dashes, and convert everything into uppercase.
+
+```ts
+abstract class Vehicle {
+  formatData(data: string) {
+    return data.replace(/\s+/g, "-").toUpperCase();
+  }
+}
+
+class SUV extends Vehicle {
+  model: string;
+
+  constructor(model: string) {
+    super();
+    this.model = model;
+  }
+}
+
+const obj = new SUV("Range Rover Sport");
+console.log(obj.formatData(obj.model));
+// Output: RANGE-ROVER-SPORT
+```
+
+Here’s what’s happening:
+
+- The `SUV` class extends `Vehicle`.
+- The `model` value has spaces (`Range Rover Sport`).
+- When passed to `formatData`, spaces are replaced with `-` and the entire string is converted to uppercase.
+
+---
+
+## Why Use Abstract Classes?
+
+This example is just a simple demonstration. Normally, abstract classes:
+
+- Act as **base classes** that define a set of properties and methods.
+- Cannot be instantiated directly.
+- Are meant to be used by **subclasses** that implement or extend their functionality.
+
+---
+
+## Common Questions About Abstract Classes
+
+### 1\. What is an abstract class?
+
+An **abstract class** is treated as a **base class** for other classes.  
+It can contain **properties** and **methods** that can be reused by subclasses.  
+However, it **cannot be instantiated** directly.
+
+---
+
+### 2\. Can we create a constructor in an abstract class?
+
+Yes.  
+Although an abstract class cannot be instantiated directly, it **can have a constructor**.
+
+The constructor of an abstract class is automatically called when a subclass is instantiated.
+
+Example:
+
+```ts
+abstract class Vehicle {
+  constructor() {
+    console.log("Abstract Class Constructor");
+  }
+}
+
+class SUV extends Vehicle {
+  constructor() {
+    super();
+    console.log("SUV Constructor");
+  }
+}
+
+const obj = new SUV();
+// Output:
+// Abstract Class Constructor
+// SUV Constructor
+```
+
+This proves that a constructor **can exist** in an abstract class and works just like constructors in normal classes.
+
+---
+
+### 3\. Can we add instance variables in an abstract class?
+
+Yes, absolutely.  
+Since abstract classes can have constructors, they can also have **instance variables**, **static members**, and **instance members**.
+
+Example:
+
+```ts
+abstract class Vehicle {
+  brand: string;
+
+  constructor(brand: string) {
+    this.brand = brand;
+  }
+}
+
+class SUV extends Vehicle {
+  constructor(brand: string) {
+    super(brand);
+  }
+}
+
+const obj = new SUV("Toyota");
+console.log(obj.brand); // Toyota
+```
+
+So, abstract classes are not limited — they can hold variables, methods, and constructors just like concrete classes.
+
+---
+
+## Conclusion
+
+Abstract classes are a **powerful OOP feature**.
+
+- They **cannot be instantiated** directly.
+- They serve as **base classes** to share common logic.
+- They can have **methods, constructors, instance variables, and static members**.
+- Subclasses can extend them and provide specific implementations.
+
+In practice, abstract classes make code **cleaner, reusable, and more structured**, especially when multiple subclasses share common behavior.
+
+---
+
+# 63
+
+---
+
+# Mastering Getters and Setters in Object-Oriented Programming
+
+Now I'm discussing the **class accessor** — that is, **getter and setter methods**.
+
+This is also a common question: **What is a getter or setter method?**
+
+---
+
+## What Are Getter and Setter Methods?
+
+The accessor, known as **getter** or **setter methods**, is an approach to create a **property inside a class**.
+
+- The **`get`** keyword is used to create a method that executes whenever you **read** or **get** the value.
+- The **`set`** keyword is used to create a method that executes whenever you **assign** a value to that property.
+
+This makes your methods act like **properties**.
+
+---
+
+## Basic Syntax Example
+
+Let’s create a simple `Vehicle` class with a getter and setter:
+
+```ts
+class Vehicle {
+  get model() {
+    console.log("Getter executed");
+    return "Some Value";
+  }
+
+  set model(v: string) {
+    console.log("Setter executed");
+  }
+}
+
+const obj = new Vehicle();
+
+// Assign value → calls setter
+obj.model = "SUV";
+
+// Get value → calls getter
+console.log(obj.model);
+```
+
+**Output:**
+
+```rust
+Setter executed
+Getter executed
+Some Value
+```
+
+As you can see:
+
+- When assigning a value → **setter** runs.
+- When reading a value → **getter** runs.
+
+---
+
+## Why Use Getters and Setters?
+
+- To **customize properties**.
+- To **add validations** before assigning values.
+- To create **read-only properties** (when only getter is defined).
+
+---
+
+## Practical Example with Validation
+
+Let’s improve our `Vehicle` class with a private member and validation.
+
+We usually follow the convention of prefixing the private property with an underscore (`_model`).
+
+```ts
+class Vehicle {
+  private _model: string = "";
+
+  get model(): string {
+    return this._model;
+  }
+
+  set model(v: string) {
+    if (v.length < 3) {
+      this._model = "M" + v;
+    } else {
+      this._model = v;
+    }
+  }
+}
+
+const obj = new Vehicle();
+
+obj.model = "SUV";
+console.log(obj.model); // SUV
+
+obj.model = "U";
+console.log(obj.model); // MU
+```
+
+### Explanation:
+
+1.  The private variable `_model` holds the actual value.
+2.  The **getter** returns `_model`.
+3.  The **setter** validates:
+
+    - If the value length is less than 3 → prepend `"M"`.
+    - Otherwise → assign value directly.
+
+---
+
+## Read-Only Properties
+
+If you only define a **getter** and omit the setter, the property becomes **read-only**.
+
+```ts
+class Vehicle {
+  private _model: string = "Default Model";
+
+  get model(): string {
+    return this._model;
+  }
+}
+
+const obj = new Vehicle();
+console.log(obj.model); // Default Model
+
+obj.model = "SUV"; // ❌ Error: Cannot assign to 'model' because it is a read-only property
+```
+
+This is useful when you want to **expose values safely** but not allow changes directly.
+
+---
+
+## Conclusion
+
+Getters and setters are a **powerful feature** in object-oriented programming:
+
+- They allow you to treat methods as **properties**.
+- They are ideal for **validation** and **custom logic** while reading/assigning values.
+- Only a getter → **read-only property**.
+- Together → create flexible, controlled properties.
+
+In real-world projects, they help **encapsulate logic** and make your code more **maintainable and secure**.
+
+---
