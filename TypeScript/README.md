@@ -8577,3 +8577,3257 @@ Getters and setters are a **powerful feature** in object-oriented programming:
 In real-world projects, they help **encapsulate logic** and make your code more **maintainable and secure**.
 
 ---
+
+# 64
+
+---
+
+# Understanding Interfaces (Object Types) in TypeScript
+
+This section is about understanding the **interface**.
+
+In newer TypeScript, an **interface** is also referred to as **object types**, and that is actually the correct convention — you will see why in a moment.
+
+---
+
+## Why Do We Need Interfaces?
+
+We already know that if you want to declare a variable of type `number`, you can do so easily.  
+For example:
+
+```ts
+let age: number = 25;
+```
+
+Now, if you try to assign a string to `age`, TypeScript will show an error.
+
+But what if you want to declare a variable of **custom type** such as `Address`?  
+The `Address` type should contain:
+
+- `address1` → string
+- `street` → string
+- `pin` → number
+- `city` → string
+
+To define such a custom structure, we use an **interface**.
+
+---
+
+## Defining an Interface
+
+```ts
+interface Address {
+  address1: string;
+  street: string;
+  pin: number;
+  city: string;
+}
+```
+
+Notice:
+
+- It looks like an **object literal**.
+- But instead of values, we specify **data types**.
+- Each property ends with a **semicolon**, not a comma.
+
+---
+
+## Using the Interface
+
+Now we can declare a variable of type `Address`:
+
+```ts
+let home: Address;
+
+home = {
+  address1: "Technologies Street",
+  street: "Piscataway",
+  pin: 8854,
+  city: "New Jersey",
+};
+```
+
+If the structure or data type doesn’t match, TypeScript throws an **error**.
+
+For example:
+
+```ts
+home = {
+  address1: "Technologies Street",
+  street: "Piscataway",
+  pin: "8854", // ❌ Error: should be number, not string
+  city: "New Jersey",
+};
+```
+
+This ensures that `home` follows the **exact structure** defined by the `Address` interface.
+
+---
+
+## Adding Methods to Interfaces
+
+Interfaces can also include **methods**.
+
+For example, let’s add a `showAddress` method that doesn’t return anything (`void`):
+
+```ts
+interface Address {
+  address1: string;
+  street: string;
+  pin: number;
+  city: string;
+  showAddress(): void;
+}
+
+let home: Address = {
+  address1: "Technologies Street",
+  street: "Piscataway",
+  pin: 8854,
+  city: "New Jersey",
+  showAddress(): void {
+    console.log(`${this.address1}, ${this.street}, ${this.pin}, ${this.city}`);
+  },
+};
+
+home.showAddress();
+```
+
+**Output:**
+
+```sql
+Technologies Street, Piscataway, 8854, New Jersey
+```
+
+So, with an interface, you can define **properties + methods** that an object must implement.
+
+---
+
+## Why Are Interfaces Called Object Types?
+
+In JavaScript, you used to define **object literals**.  
+In TypeScript, the **interface defines the structure of such object literals**.
+
+That’s why, in newer TypeScript, an interface is also referred to as an **object type**.
+
+---
+
+## Important Questions About Interfaces
+
+### 1\. What is an interface (or object type) in TypeScript?
+
+An interface defines the **structure of an object (or class)**.  
+When an object is declared, it must follow the structure defined by the interface.
+
+---
+
+### 2\. What is the difference between **custom types** and **interfaces**?
+
+Both interfaces and custom types can be used to define object structures:
+
+```ts
+// Using interface
+interface Address {
+  address1: string;
+  street: string;
+  pin: number;
+  city: string;
+}
+
+// Using type alias
+type AddressType = {
+  address1: string;
+  street: string;
+  pin: number;
+  city: string;
+};
+```
+
+Both are valid, but there are **differences**:
+
+- **Type alias** (`type`)
+
+  - Can define **union, primitive, intersection, tuple, or any type of data**.
+  - More flexible for advanced type manipulation.
+
+- **Interface**
+
+  - Primarily deals with **objects or classes**.
+  - Acts as a **contract** for classes (when used with the `implements` keyword).
+  - Can be extended using **extends** or **implements**, which is not possible with type aliases.
+
+With newer versions of TypeScript, the differences are becoming **smaller**, but these distinctions still matter.
+
+---
+
+## Conclusion
+
+- An **interface** defines the **structure** of objects (and classes).
+- It ensures type safety and consistency by enforcing strict rules on object shape.
+- Interfaces can include both **properties and methods**.
+- You can achieve the same with **type aliases**, but interfaces are particularly powerful with **classes** because they act as **contracts**.
+
+👉 In the next section, we will see how an interface can be applied to **classes** using the `implements` keyword.
+
+---
+
+# 65
+
+---
+
+# Implementing Interfaces on Classes in TypeScript
+
+Now we will discuss how to implement interfaces on classes.
+
+There are four relative questions as well.
+
+So now you know the basics of interface. But so far we have just seen it with the object literal. Now we are going to check the interface with classes.
+
+---
+
+## Defining an Interface
+
+Let’s take an example.
+
+I declare an interface named **Vehicle**, which, for example, has:
+
+- **id** → number (vehicle ID)
+- **name** → string (vehicle name)
+- **getBaseVehicleInfo** → a method returning a string
+
+So this is an interface that I want to implement on a class.
+
+---
+
+## Implementing an Interface on a Class
+
+Let me take a class here.
+
+```ts
+interface Vehicle {
+  id: number;
+  name: string;
+  getBaseVehicleInfo(): string;
+}
+
+class Car implements Vehicle {
+  seats: number = 4; // class-specific member
+
+  id: number;
+  name: string;
+
+  constructor(i: number, n: string) {
+    this.id = i;
+    this.name = n;
+  }
+
+  getBaseVehicleInfo(): string {
+    return this.id + ", " + this.name;
+  }
+}
+
+const obj = new Car(1, "My Car");
+console.log(obj.getBaseVehicleInfo());
+```
+
+When I say `implements Vehicle`, it means that the class **Car** must follow the signature of the interface **Vehicle**.
+
+The class may have its own members (like `seats`), but at the same time, it must include:
+
+- `id` → number
+- `name` → string
+- `getBaseVehicleInfo()` → method returning string
+
+If any of these are missing, TypeScript will show an error:
+
+> `Class 'Car' incorrectly implements interface 'Vehicle'`.
+
+---
+
+## Adding Optional Properties
+
+Now let’s say we want to add a **model** property, but it is optional.
+
+In the interface, we can mark it as optional using the `?` operator:
+
+```ts
+interface Vehicle {
+  id: number;
+  name: string;
+  model?: string; // optional property
+  getBaseVehicleInfo(): string;
+}
+```
+
+The moment I add `model?`, the error goes away.
+
+This means the property may be there or not. If you do use it, it must be of type string.
+
+---
+
+## Multiple Interfaces
+
+In this example, we only had one interface, but a class can implement multiple interfaces by separating them with a comma:
+
+```ts
+class Car implements Vehicle, AnotherInterface {
+  // must implement members of both interfaces
+}
+```
+
+---
+
+## Key Interview Questions
+
+1.  **How can you make sure that a class follows a certain signature?**  
+    → Apply an interface on a class using the `implements` keyword.
+2.  **Can a class have its own members in addition to those defined in an interface?**  
+    → Yes, a class may contain its own properties and methods.
+3.  **How can you apply multiple interfaces on a class?**  
+    → By separating interface names with a comma.
+4.  **How do you provide an optional property inside an interface?**  
+    → By using the `?` operator.
+
+---
+
+## Final Thoughts
+
+Interfaces in TypeScript act as a **contract**. By applying them to classes, you enforce a fixed structure while still allowing flexibility for extra members. This ensures consistency across your codebase and makes development more robust.
+
+---
+
+# 66
+
+---
+
+# Readonly Properties in TypeScript Interfaces
+
+The next topic in the interface or object type is **readonly properties**.
+
+This itself is a common interview question:
+
+👉 _How can you make properties readonly via interface?_
+
+We have already seen the `readonly` modifier in a **class**. The same modifier can also be used inside an **interface**.
+
+⚠️ However, there’s one difference:
+
+- In a class, we may use `public` or `private` along with `readonly`.
+- In an interface, we only use `readonly` (no access modifiers).
+
+---
+
+## Practical Example
+
+Let’s try this step by step.
+
+```ts
+interface Vehicle {
+  readonly vId: number;
+  vName: string;
+}
+```
+
+Here, `vId` is declared as **readonly**.
+
+Now let’s create an object:
+
+```ts
+let obj: Vehicle = {
+  vId: 56,
+  vName: "Car",
+};
+
+console.log(obj);
+```
+
+✅ Even though `vId` is **readonly**, you are allowed to assign a value to it **once during initialization**.
+
+---
+
+## Attempting to Reassign
+
+Now let’s try changing the `vId` after initialization:
+
+```ts
+obj.vId = 78; // ❌ Error: Cannot assign to 'vId' because it is a read-only property
+```
+
+As expected, TypeScript immediately throws an error because `vId` was marked as **readonly** in the interface.
+
+This ensures that once assigned, the property cannot be modified later.
+
+---
+
+## Key Takeaways
+
+- The `readonly` modifier can be applied in **interfaces** as well as **classes**.
+- In interfaces, you don’t use `public` or `private`—only `readonly`.
+- A readonly property **can be set once** during initialization, but **cannot be reassigned** later.
+- This works the same way whether the interface is implemented on an **object literal** or on a **class**.
+
+---
+
+### Final Thought
+
+Readonly properties in interfaces are a powerful way to enforce immutability in TypeScript applications. They ensure that certain values remain constant throughout the program, reducing bugs and making the code more predictable.
+
+---
+
+# 67
+
+---
+
+# Inheritance in TypeScript Interfaces
+
+In the previous lecture, we saw how to implement **inheritance on a class**.
+
+We use the `implements` keyword to make a class follow the design of an interface.
+
+But here’s something interesting:  
+👉 It is also possible to **inherit an interface from another interface**.
+
+Let’s see this practically.
+
+---
+
+## Defining Interfaces
+
+```ts
+interface Vehicle {
+  id: number;
+}
+
+interface SUV {
+  torque: number;
+}
+```
+
+Here we have two interfaces:
+
+- `Vehicle` with a single member `id`
+- `SUV` with a single member `torque`
+
+---
+
+## Implementing an Interface in a Class
+
+Now let’s define a class:
+
+```ts
+class Motor implements SUV {
+  torque = 30;
+}
+```
+
+In this case, the class `Motor` implements the `SUV` interface.
+
+---
+
+## Extending an Interface
+
+Now imagine that whenever `SUV` is implemented, it should also follow the `Vehicle` interface.
+
+We can achieve this by extending:
+
+```ts
+interface SUV extends Vehicle {
+  torque: number;
+}
+```
+
+The moment we extend `Vehicle`, the compiler will throw an error if `Motor` doesn’t also provide the `id` property.
+
+```ts
+class Motor implements SUV {
+  id = 34;
+  torque = 30;
+}
+```
+
+✅ Now the error is resolved because `Motor` provides both `id` (from `Vehicle`) and `torque` (from `SUV`).
+
+---
+
+## Multiple Interface Inheritance
+
+TypeScript also allows extending **multiple interfaces**.
+
+```ts
+interface A {
+  propA: string;
+}
+
+interface B {
+  propB: number;
+}
+
+interface C extends A, B {
+  propC: boolean;
+}
+```
+
+Here, `C` inherits both `A` and `B`. Any class implementing `C` must provide **all three properties**: `propA`, `propB`, and `propC`.
+
+---
+
+## Interview Questions
+
+1.  **How do you inherit an interface?**
+
+    - By using the `extends` keyword:
+
+      ```ts
+      interface SUV extends Vehicle { ... }
+      ```
+
+2.  **Can you extend multiple interfaces? How?**
+
+    - Yes, you can.
+    - Use the `extends` keyword followed by a comma-separated list of interfaces:
+
+      ```ts
+      interface C extends A, B { ... }
+      ```
+
+---
+
+## Final Thoughts
+
+Interface inheritance in TypeScript makes your code more **modular, reusable, and scalable**. It ensures consistency across classes while still allowing flexibility in design.
+
+---
+
+# 68
+
+---
+
+# Mastering TypeScript Generics: Basics & Examples
+
+## Introduction
+
+Now we are starting a new section, the **generics section**.
+
+In this tutorial we are going to learn about the **generics basics**.
+
+When you write a program, you always try to make it reusable.
+
+In modern development, it is also referred to as **reusable component**, a component which is **flexible and scalable for long-term usage**.
+
+TypeScript's **generics feature** is used to develop **reusable components**.
+
+Generics allow components to work with **any data type** instead of restricting to one data type only, and they also allow developers to use these components with their **own custom types**.
+
+If you are a C# or Java developer, you must be familiar with **generics**, which are used to create reusable components.
+
+TypeScript's generics are **the same**.
+
+---
+
+## Why Generics?
+
+Let’s take an example to see how generics is useful.
+
+I’m going to create a function.
+
+```ts
+function getData(dataPoints: any[]): any[] {
+  return new Array().concat(dataPoints);
+}
+```
+
+This function takes any array and returns a new array.
+
+Now let’s use it:
+
+```ts
+let numericDataPoint = getData([1, 2, 3]);
+let strDataPoint = getData(["top", "bottom", "left"]);
+
+numericDataPoint.push(68);
+strDataPoint.push("northeast");
+
+console.log(numericDataPoint);
+console.log(strDataPoint);
+```
+
+So far so good ✅
+
+But what if we push **wrong types**?
+
+```ts
+numericDataPoint.push("right"); // pushing string into number array
+strDataPoint.push(120); // pushing number into string array
+```
+
+When you run this, you’ll see **mixed data types** inside arrays, which is **not safe**.
+
+This is exactly the problem **Generics** solve.
+
+---
+
+## Generics in Action
+
+Generics use a **type variable** inside angle brackets `<>`.
+
+Usually we use `T`, but you can use any name like `U`, `V`, or `Type`.
+
+Here’s how we fix the function with generics:
+
+```ts
+function getData<T>(dataPoints: T[]): T[] {
+  return new Array<T>().concat(dataPoints);
+}
+```
+
+Now when calling:
+
+```ts
+let numericDataPoint = getData<number>([10, 20, 30]);
+let strDataPoint = getData<string>(["top", "bottom", "left"]);
+```
+
+✔️ `numericDataPoint` is strictly a number array.  
+✔️ `strDataPoint` is strictly a string array.
+
+If you try:
+
+```ts
+numericDataPoint.push("right"); // ❌ Error
+strDataPoint.push(120); // ❌ Error
+```
+
+TypeScript **blocks it immediately**.
+
+---
+
+## Type Inference in Generics
+
+What if you don’t explicitly pass the type?
+
+```ts
+let numericDataPoint = getData([10, 20, 30]);
+let strDataPoint = getData(["top", "bottom", "left"]);
+```
+
+This still works ✅ because of **type inference**.
+
+TypeScript automatically detects that one array is numbers and the other is strings.
+
+⚠️ But it’s still a good practice to **explicitly specify the type** when calling a generic function.
+
+---
+
+## Key Takeaways
+
+- Generics allow writing **reusable, type-safe components**.
+- They ensure that once a type is chosen, the same type is maintained consistently.
+- Generics can be used in **functions, classes, and interfaces**.
+- If you don’t pass the type explicitly, **TypeScript infers it**.
+
+---
+
+## Interview Questions
+
+**Q1. What is TypeScript Generics? Explain with syntax.**
+
+> TypeScript's **Generics feature** is used to develop **reusable components**.  
+> Generics allow components to work with **any data type** instead of restricting to one data type only, and also allow developers to use these components with their own types.
+
+**Q2. Is it necessary to pass data type when calling a generic function?**
+
+> No. If you don’t pass the type, TypeScript uses **type inference** to detect the type. But the best practice is to **always specify it explicitly**.
+
+**Q3. What will be the output if you don’t pass data type?**
+
+> It will still work. TypeScript will infer the type based on the values passed.
+
+---
+
+## Conclusion
+
+So here the function `getData` is a **generic function**, and the **user of the function decides the type** at runtime.
+
+Generics make your code:
+
+- **Reusable**
+- **Flexible**
+- **Type-safe**
+
+This is just the **basic idea of generics in TypeScript**. In the next parts, we will explore **generic classes, interfaces, and advanced patterns**.
+
+---
+
+# 69
+
+---
+
+# Mastering Generics in TypeScript: Multiple Type Variables
+
+So now we are proceeding with the **generics section**.
+
+In this section we are going to discuss about **multiple type variables**.
+
+In the previous example, we have seen that `T` is called a type variable, and there is only one type variable in that example. But depending on the requirement, you can have **multiple type variables**.
+
+---
+
+## Creating an Example with Multiple Type Variables
+
+Let’s create one example to understand the syntax.
+
+I am going to create a function called `add` which will have, let’s say, two type variables.
+
+```ts
+function add<T, U>(a: T, b: U) {
+  console.log(typeof a);
+  console.log(typeof b);
+}
+```
+
+Here:
+
+- `T` is the first type variable
+- `U` is the second type variable
+- `a` is of type `T`
+- `b` is of type `U`
+
+---
+
+## Calling the Generic Function
+
+Now let’s call the `add` function.
+
+👉 First call:
+
+- The first parameter should be a **number**
+- The second parameter should be a **string**
+
+```ts
+add<number, string>(1, "Hi");
+```
+
+👉 Second call:
+
+- The first parameter should be a **string**
+- The second parameter should be a **number**
+
+```ts
+add<string, number>("Hi", 1);
+```
+
+---
+
+## Output
+
+When we run the code, we get:
+
+```typescript
+number;
+string;
+string;
+number;
+```
+
+So the type of `a` and `b` is displayed respectively as **number/string** and **string/number**.
+
+This shows that the use of this generic function has provision to decide the type for each parameter passed.
+
+---
+
+## Mixing Generic and Non-Generic Types
+
+You may also use **generic and non-generic types together**.
+
+For example, here in this particular function I can add one more `flag` variable which is of `boolean` type:
+
+```ts
+function add<T, U>(a: T, b: U, flag: boolean) {
+  console.log(typeof a);
+  console.log(typeof b);
+  console.log(typeof flag);
+}
+
+add<number, string>(1, "Hi", true);
+add<string, number>("Hi", 1, false);
+```
+
+### Output:
+
+```typescript
+number;
+string;
+boolean;
+string;
+number;
+boolean;
+```
+
+So now you see that we have:
+
+- `a` and `b` → generic types (`T` and `U`)
+- `flag` → non-generic, fixed boolean type
+
+And it works perfectly fine.
+
+---
+
+## Interview-Style Questions
+
+**Q1. How can you use multiple type variables?**  
+👉 In the `add` function we have `T` and `U`.  
+You just put a comma in the angle bracket:
+
+```ts
+function add<T, U>(a: T, b: U) { ... }
+```
+
+While calling, you specify the type separated by a comma:
+
+```ts
+add<number, string>(1, "Hi");
+```
+
+---
+
+**Q2. Is it possible to have generic and non-generic types together?**  
+👉 Yes, of course.  
+As we have seen in the example, `flag` was a non-generic **boolean** variable, but `T` and `U` were generic.
+
+The only thing is:
+
+- When you have generic types, you specify them in the angle brackets while calling.
+- For non-generic parameters, you don’t need to specify anything in the angle brackets.
+
+---
+
+## Final Thoughts
+
+Generics with multiple type variables in TypeScript give you **flexibility and type safety**.  
+They allow you to define functions, classes, and interfaces that can work with a variety of data types, while still enforcing strict type rules.
+
+This is a powerful concept that takes TypeScript beyond regular JavaScript, making your code more reusable and reliable.
+
+---
+
+# 70
+
+---
+
+# Understanding Generic Constraints in TypeScript
+
+Generics are a powerful feature in TypeScript, allowing us to write reusable and flexible code that can work with multiple data types. But sometimes, you might want to restrict the types that can be passed into a generic. That’s where **generic constraints** come into play.
+
+In this blog, we’ll explore **what generic constraints are** and **how to use them** with practical examples.
+
+---
+
+## What is a Generic Constraint?
+
+As we discussed earlier, a generic type works with **any data type**. However, you can **put a constraint** on this behavior to ensure that only certain types are allowed.
+
+In other words, a **generic constraint** restricts the kinds of values that can be passed to a generic type parameter.
+
+---
+
+## Example: Adding a Constraint
+
+Let’s write a simple example to understand this better.
+
+```typescript
+function getLength<T>(v: T): void {
+  console.log(v.length); // ❌ Error here
+}
+```
+
+Here, we’re trying to print the `.length` property of `v`. But this shows an error:
+
+> **Error**: Property 'length' does not exist on type 'T'.
+
+Why? Because `T` can be any type (like `number`, `boolean`, etc.), and not all of them have a `length` property.
+
+---
+
+## Adding a Constraint with Interface
+
+Now we want to **allow only those types that have a `length` property** (like `string`, `Array`, etc.).
+
+To do this, we can create an interface and extend it in our generic:
+
+```typescript
+interface IC {
+  length: number;
+}
+
+function getLength<T extends IC>(v: T): void {
+  console.log(v.length);
+}
+```
+
+✅ Now the error is gone. We have successfully added a constraint on `T` so that it only accepts arguments with a `length` property.
+
+---
+
+## Calling the Function
+
+```typescript
+getLength("Hi"); // ✅ Works, output: 2
+getLength([1, 2]); // ✅ Works, output: 2
+getLength(123); // ❌ Error: Argument of type 'number' is not assignable
+```
+
+So, if we pass a `string` or `array`, it works fine. But if we pass a `number`, it gives an error because numbers don’t have a `length` property.
+
+---
+
+## Using Classes as Constraints
+
+In this example, we used an **interface** to add the constraint. But you may also use a **class**.
+
+The syntax would look something like this:
+
+```typescript
+class Base {
+  length: number = 0;
+}
+
+function getLength<T extends Base>(v: T): void {
+  console.log(v.length);
+}
+```
+
+Now, any type that extends `Base` can be used with `getLength`.
+
+---
+
+## Relative Question
+
+**Q: What is a generic constraint and how can we add it?**  
+👉 A generic constraint restricts the types that can be passed to a generic type variable. You can add it using the `extends` keyword with an interface or a class.
+
+---
+
+## Final Thoughts
+
+Generic constraints are extremely useful when you want your generic functions or classes to be **more predictable** and **error-free**. By using them, you can ensure that only valid types with the required properties are passed in.
+
+---
+
+🎯 _Next time you write a generic function, think about whether you should allow every type, or only specific ones with certain properties._
+
+---
+
+# 71
+
+---
+
+# Mastering TypeScript Generics: Implementing Generic Classes
+
+In this section, we are going to discuss **generic classes** in TypeScript.
+
+There is one relative question that often comes up:
+
+👉 **How to implement generic classes?**
+
+Let’s dive in step by step.
+
+---
+
+## Understanding Generic Classes
+
+The way we have defined generic functions earlier, we can also define **generic classes**.  
+For example, you can declare a class with multiple type variables:
+
+```ts
+class Vehicle<T, U> {
+  // class members here
+}
+```
+
+This means that the class can have members of type **T** and **U**, allowing more flexibility and reusability.
+
+---
+
+## Example: Generic Employee Class
+
+Let’s create a practical example.
+
+We’ll define a class called `Employee` with two type variables, `T` and `U`.
+
+```ts
+class Employee<T, U> {
+  private eCode: T;
+  private eName: U;
+
+  constructor(ec: T, en: U) {
+    this.eCode = ec;
+    this.eName = en;
+  }
+
+  displayData(): void {
+    console.log(this.eCode, this.eName);
+  }
+}
+```
+
+Here’s what we did:
+
+- The class has **two members**:
+
+  - `eCode` of type `T`
+  - `eName` of type `U`
+
+- The constructor assigns values to these members.
+- The method `displayData()` logs both values.
+
+---
+
+## Creating Objects of the Generic Class
+
+Now let’s see how to use this class.
+
+### Example 1: Number and String
+
+```ts
+let obj = new Employee<number, string>(1001, "First Employee");
+obj.displayData();
+```
+
+Here:
+
+- `T` → `number`
+- `U` → `string`
+
+So `eCode` is a number, and `eName` is a string.
+
+---
+
+### Example 2: String and String
+
+```ts
+let obj1 = new Employee<string, string>("1002", "Second Employee");
+obj1.displayData();
+```
+
+Here:
+
+- `T` → `string`
+- `U` → `string`
+
+So both `eCode` and `eName` are strings.
+
+---
+
+## Output
+
+When you run the above code, the output will be:
+
+```sql
+1001 First Employee
+1002 Second Employee
+```
+
+---
+
+## Key Takeaways
+
+- A **generic class** can accept multiple type parameters just like generic functions.
+- You can define members, constructors, and methods that use those type variables.
+- While creating objects, you decide the actual types (`T`, `U`, etc.) that the class will use.
+- This makes your classes more reusable and type-safe.
+
+---
+
+## Bonus: Generic Interfaces with Generic Classes
+
+You can also implement a **generic interface on a generic class**.  
+The syntax remains the same as we have already seen in previous examples.
+
+---
+
+✅ So this is how we implement **generic classes** in TypeScript!
+
+---
+
+# 72
+
+---
+
+# Mastering TypeScript: Understanding Generic Interfaces
+
+We have already discussed about **generic classes**.
+
+In this section, I am discussing **what are generic interfaces?**
+
+Just like generic classes, it is also possible to create **generic interfaces**.
+
+---
+
+## What are Generic Interfaces?
+
+The way we can implement generic classes, we can also create generic interfaces.
+
+When you have to create a generic interface, the syntax is very similar to a generic class.
+
+👉 What I mean is you give **type variable** after the interface name, just like you do after the class name.
+
+---
+
+## Example: Generic Interface with Objects
+
+Let’s take an example.
+
+```ts
+interface Vehicle<T, U> {
+  model: T;
+  vType: U;
+}
+
+// First object: model is number, vType is string
+let obj: Vehicle<number, string> = {
+  model: 1001,
+  vType: "SUV",
+};
+
+// Second object: both model and vType are string
+let obj1: Vehicle<string, string> = {
+  model: "1002",
+  vType: "Sedan",
+};
+
+console.log(obj);
+console.log(obj1);
+```
+
+✅ Output:
+
+- The first object stores model as a number and type as string.
+- The second object stores both as strings.
+
+This is a very simple and similar way to classes where we are implementing the **generic type variables** with the interface.
+
+---
+
+## Generic Interface with Functions
+
+You can also implement a **generic interface with a function**. Let’s have a look at it.
+
+```ts
+// Step 1: Define generic interface
+interface AddOrJoin<T, U> {
+  (a: T, b: U): void;
+}
+
+// Step 2: Create function for numbers
+function addValues(a: number, b: number): void {
+  console.log(a + b);
+}
+
+// Step 3: Create function for strings
+function concatValues(a: string, b: string): void {
+  console.log(a + b);
+}
+
+// Step 4: Define function expressions with interface
+let someVal: AddOrJoin<number, number> = addValues;
+let concatVal: AddOrJoin<string, string> = concatValues;
+
+// Step 5: Call functions
+someVal(5, 6); // Output: 11
+concatVal("Hello ", "World"); // Output: Hello World
+```
+
+Here:
+
+- `someVal` uses numbers → performs addition.
+- `concatVal` uses strings → performs concatenation.
+
+---
+
+## Refactored Version
+
+We can simplify and refactor the code to use a **single generic function**.
+
+```ts
+interface AddOrJoin<T, U> {
+  (a: T, b: U): void;
+}
+
+function addValues<T, U>(a: T, b: U): void {
+  console.log(`${a} ${b}`);
+}
+
+let someVal: AddOrJoin<number, number> = addValues;
+let concatVal: AddOrJoin<string, string> = addValues;
+
+someVal(5, 6); // Output: 5 6
+concatVal("Hello", "World"); // Output: Hello World
+```
+
+Now both number addition and string concatenation are handled elegantly.
+
+---
+
+## Interview Questions
+
+1.  **Explain the syntax of how to define a generic interface.**
+
+    - Example:
+
+    ```ts
+    interface Vehicle<T, U> {
+      model: T;
+      vType: U;
+    }
+    ```
+
+2.  **Give an example of using a generic interface as a function type.**
+
+    - Example:
+
+    ```ts
+    interface AddOrJoin<T, U> {
+      (a: T, b: U): void;
+    }
+    ```
+
+---
+
+## Conclusion
+
+In this section, we explored **generic interfaces** in TypeScript with different possibilities:
+
+- Using generic interfaces with objects.
+- Using generic interfaces with functions.
+- Refactoring to a more reusable, elegant structure.
+
+Generic interfaces allow us to write **flexible, reusable, and type-safe code** — making them an essential concept in mastering TypeScript.
+
+---
+
+# 73
+
+---
+
+# Understanding Modules in TypeScript
+
+When you create an application, there are often **huge numbers of lines of code** involved.  
+Ideally, you try to divide the code into **meaningful pieces**.
+
+TypeScript (and ES6 JavaScript) gives you a way to do this through **modules**, which can be **exported** and **imported** as per your requirement.
+
+---
+
+## What is a Module in TypeScript?
+
+A **module** is a logical piece of code that can be **exported** and **reused** wherever needed.  
+With **ES6**, two important statements were introduced:
+
+- `export`
+- `import`
+
+Using these statements, you can work with modular implementations instead of writing everything in a single file.
+
+---
+
+## A Practical Example
+
+Let’s go step by step.
+
+### index.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Modules Example</title>
+  </head>
+  <body>
+    <h1>Some content of the page</h1>
+    <script type="module" src="index.js"></script>
+  </body>
+</html>
+```
+
+### calc.js
+
+```javascript
+export function calc() {
+  console.log("Module code executed");
+}
+```
+
+### index.js
+
+```javascript
+import { calc } from "./calc.js";
+
+calc();
+```
+
+---
+
+## Common Errors You’ll Face
+
+If you try to use `import` directly without specifying the script type, you’ll get:
+
+```cpp
+Cannot use import statement outside a module
+```
+
+✅ Fix: Use
+
+```html
+<script type="module" src="index.js"></script>
+```
+
+---
+
+## Running on Local Machine
+
+Another problem occurs when running locally:
+
+```vbnet
+Access to script ... has been blocked by CORS policy
+```
+
+This happens because when using `import/export` in a simple HTML + JS setup, you must **run a server**.
+
+### How to Fix?
+
+- Use a lightweight web server.
+- For example, you can configure the **Web Server for Chrome** extension and set your project folder as the root.
+- Then, open your project at `http://127.0.0.1:8887`.
+
+Once done, your module will run perfectly:
+
+```css
+Module code executed
+```
+
+---
+
+## Relative Questions
+
+### 1\. What is a Module?
+
+A **module** is a way to divide your code into logical pieces. With `export` and `import`, you can reuse code across files instead of duplicating it.
+
+---
+
+### 2\. Can you import any module inside a script tag?
+
+Yes ✅, but only if you write:
+
+```html
+<script type="module" src="index.js"></script>
+```
+
+Without `type="module"`, you’ll face errors.
+
+---
+
+### 3\. How do you run import/export statements on a local machine?
+
+- You need a **server** (because of browser restrictions like CORS).
+- Frameworks like **Angular** and **React** already provide a dev server through tools like Webpack.
+- If using plain HTML + JS, you can run a local server (e.g., via Chrome Web Server).
+
+---
+
+## Final Thoughts
+
+Modules make your TypeScript (and JavaScript) code more **structured, reusable, and maintainable**.  
+With just `export` and `import`, you can organize your project into smaller logical units instead of a single monolithic script.
+
+---
+
+# 74
+
+    ---
+
+# Understanding Named Export and Import in JavaScript
+
+Now that we have seen **how to execute the import and export statements** with normal HTML files, let’s dive deeper into the syntax.
+
+Although this lecture is focused on **JavaScript**, it serves as a **prerequisite** for understanding **modules and namespaces in TypeScript**.
+
+---
+
+## Reminder: Running Import/Export
+
+To run `import` and `export` statements with **HTML + JavaScript**:
+
+- You need to **configure a server** (for example, Chrome Web Server extension).
+- Or you can **upload files on a live server**.
+
+Running modules directly from local files without a server will result in **CORS errors**.
+
+---
+
+## Two Ways of Export/Import
+
+JavaScript offers two approaches:
+
+1.  **Named Export/Import**
+2.  **Default Export/Import**
+
+In this lecture, we’ll focus on **Named Export and Import**.
+
+---
+
+## Example: Named Export
+
+### index.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Named Export Example</title>
+  </head>
+  <body>
+    <h1>Some Content of the Page</h1>
+    <script type="module" src="index.js"></script>
+  </body>
+</html>
+```
+
+### calc.js
+
+```javascript
+export function sum(a, b) {
+  return a + b;
+}
+
+export function cube(a) {
+  return a * a * a;
+}
+```
+
+Here, we **export** two modules (`sum` and `cube`) using the **named export** syntax.
+
+---
+
+## Example: Named Import
+
+### index.js
+
+```javascript
+import { sum, cube } from "./calc.js";
+
+console.log(sum(9, 5));
+console.log(cube(3));
+```
+
+### Output
+
+```
+14
+27
+```
+
+✅ Remember:
+
+- **Curly braces `{}` are mandatory** for named imports.
+- Without them, you’ll get an error.
+
+---
+
+## Alternate Syntax for Export
+
+Instead of writing `export` before every function, you can export them all at once:
+
+```javascript
+function sum(a, b) {
+  return a + b;
+}
+
+function cube(a) {
+  return a * a * a;
+}
+
+export { sum, cube };
+```
+
+This allows you to choose **which functions to export** while keeping others private.
+
+---
+
+## Exporting with Different Names
+
+You can rename while exporting:
+
+```javascript
+function sum(a, b) {
+  return a + b;
+}
+
+export { sum as total };
+```
+
+And then, while importing:
+
+```javascript
+import { total } from "./calc.js";
+
+console.log(total(5, 7));
+```
+
+---
+
+## Importing All Named Modules
+
+If a file has **many exports**, you can import all at once:
+
+```javascript
+import * as calc from "./calc.js";
+
+console.log(calc.sum(9, 5));
+console.log(calc.cube(3));
+```
+
+Here, `calc` becomes an **object** that contains all the exported modules.
+
+---
+
+## Using `as` with Import
+
+Just like with export, you can rename imports too:
+
+```javascript
+import { sum as total } from "./calc.js";
+
+console.log(total(10, 20));
+```
+
+---
+
+## Key Questions
+
+### 1\. What is Named Export/Import?
+
+A **named export/import** allows you to export multiple modules from a file and import them with their exact names.
+
+---
+
+### 2\. Can you avoid curly brackets while importing a named module?
+
+❌ No.  
+You **must use curly brackets `{}`** when importing named modules.
+
+---
+
+### 3\. How can you import all named modules from a file?
+
+✅ Use:
+
+```javascript
+import * as obj from "./file.js";
+```
+
+Then call with:
+
+```javascript
+obj.functionName();
+```
+
+---
+
+### 4\. Is it a good practice to import all modules together?
+
+It depends:
+
+- If you **use all the modules**, importing them all is fine.
+- If you **don’t need some**, avoid importing everything.
+
+  - Import only the specific modules you use.
+
+- Modern build tools like **Webpack** may do **tree-shaking** (remove unused modules automatically).
+- But in **vanilla HTML + JS**, unused modules are still imported, which is inefficient.
+
+---
+
+### 5\. Do modules hoist?
+
+Yes ✅, modules are **hoisted** in ES6.  
+That means you can technically use them before the import line.  
+But in practice, it’s best to always **import modules at the top** of your file.
+
+---
+
+### 6\. Do you need the same name while importing a named module?
+
+No ✅.  
+You can use the **`as` keyword** to rename a module while importing.
+
+Example:
+
+```javascript
+import { sum as total } from "./calc.js";
+```
+
+---
+
+## Final Thoughts
+
+- **Named exports/imports** are useful when you want to **export multiple functions or constants** from a file.
+- Always remember:
+
+  - Curly braces are **mandatory** for named imports.
+  - You can rename modules with `as`.
+  - You can import everything using `* as obj`.
+
+- Whether you import all at once or only specific ones depends on your **project size and usage**.
+
+---
+
+# 75
+
+---
+
+# Understanding Default Exports and Imports in JavaScript
+
+Now we have seen about importing and exporting, but with a **named syntax**.
+
+In this lecture, we are discussing **default exports and imports**.
+
+This lecture is of JavaScript, but this is a prerequisite of **modules and namespaces of TypeScript**.
+
+---
+
+## What is Default Export?
+
+When I say **default export**, it means there will be **one module per file**.
+
+Generally, you see this approach in frameworks where one function or a class or a component is exported.
+
+In other words, you export one container which has many things inside it and you import that one module only.
+
+Exporting one module means you are also dividing the functionality into various modules.
+
+It’s also a good practice in the long run that you divide your modules into **logical pieces**.
+
+---
+
+## Named Exports vs Default Exports
+
+For example, the code which we have has **sum** and **cube**.
+
+- There are two different functions which we are exporting from `calc.js`.
+- The `calc.js` does the export but with the **named syntax** — that means we are exporting the function with name `sum` and `cube`.
+- So naturally, we have to **import with the same name**.
+
+Now, if I have to convert the very same thing with the **default import and export** approach, then it has to be something like this:
+
+---
+
+## Example: Converting to Default Export
+
+Let’s say I have this `cube.js` file.
+
+- This cube function I should put inside `cube.js`.
+- Then I’ll say:
+
+```javascript
+export default function cube() {
+  // function code here
+}
+```
+
+That’s it.
+
+At the same time, the `sum` function:
+
+- Assume that we keep the file name as `sum.js`.
+- Inside this file:
+
+```javascript
+export default function sum() {
+  // function code here
+}
+```
+
+So this is the **default export**.
+
+It means that we have **only one export per file**.
+
+Naturally, this is going to increase number of files, but that is a newer approach anyway, where you have **more files** — which is actually the **separation of code**.
+
+---
+
+## Importing Default Exports
+
+As long as importing these modules are concerned, you **do not need to use curly brackets**.
+
+So now let’s say:
+
+```javascript
+import sum from "./sum.js";
+import cube from "./cube.js";
+```
+
+Here you must observe that now I am **not using curly brackets**.
+
+- You use curly brackets when you have **named export**.
+- But when you have **default export**, you do not write those curly brackets.
+
+It means you write `import` and then the name.
+
+Now, this name is also **open for you**. You decide what name you want to give.
+
+At the moment, we keep `sum` and `cube`.
+
+---
+
+## Checking in Browser
+
+Let’s just run this to see whether the default export and import is working or not.
+
+- I’ll go to the browser.
+- Refresh the page.
+- And now here we have the output working as expected.
+
+But the difference here is now we are **not using the named export and import**. Instead, we are using the **default one**.
+
+So ideally we put various modules in different files.  
+**One file, one module** — that’s what we do with default export and import.
+
+---
+
+## Flexibility with Default Exports
+
+Another thing I would like to mention here is that:
+
+- In case, let’s say instead of `sum`, I give `total`.
+- And here also I’m going to say `total`.
+
+Let’s try this.
+
+And still it is working.
+
+The `export default` basically says that you export with **any name** — that doesn’t matter.
+
+- **Name does not have to be the same** with default syntax.
+
+This also means I may remove the name completely.
+
+---
+
+## Exporting Classes and Functions
+
+Generally, we see that if we have, let’s say, a class to export, we write like this:
+
+```javascript
+export default class MyClass {
+  // class body
+}
+```
+
+Or you just avoid the name, and it is **absolutely valid syntax**.
+
+Let’s try this now:
+
+- We do not have any name for this `sum`.
+- And here we give `total` or let’s say `sum` — doesn’t matter.
+
+But I keep `sum`.  
+Save this and refresh the page — and you see that still the output is without any error.
+
+---
+
+## Other Export Syntax
+
+There is also one more syntax where you can export the function at the end of the file:
+
+```javascript
+function sum(a, b) {
+  return a + b;
+}
+
+export default sum;
+```
+
+This is also a valid syntax.
+
+Another syntax you have to export is:
+
+```javascript
+export { sum as default };
+```
+
+This is also a valid syntax.
+
+Let’s just refresh the page and you see the output is the same.
+
+---
+
+## Key Takeaways
+
+- As long as exporting default is concerned, you have a keyword called **default**, which exports the default module which you can later import with **whichever name you want to**.
+- You generally export **one module per file** when you are implementing the default exports.
+
+---
+
+## Interview Questions
+
+✅ **What is the default export and import and what’s the difference between named and default export/import?**
+
+- Named exports → explicit, multiple per file, need curly brackets.
+- Default exports → implicit naming, one per file, no curly brackets needed.
+
+✅ **Explain various ways of implementing default export and import.**
+
+- Directly on the function or class (`export default function …`)
+- At the end of the file (`export default sum`)
+- With aliasing (`export { sum as default }`)
+
+---
+
+🎯 With this, you now understand **default exports and imports**, their syntax, differences from named exports, and the flexibility they offer in structuring JavaScript codebases.
+
+---
+
+# 76
+
+---
+
+# Understanding Modules in TypeScript
+
+Now I'm going to discuss about **modules in the TypeScript language**.
+
+👉 The key question here is: **How do you deal with modules in TypeScript?**
+
+In the previous three lectures, I have tried to explain the behavior of modern JavaScript modules. The `import` and `export` statements are used to deal with modules. A file becomes a module and there might be many declarations or code inside it. If you have a function, an interface, or a class — everything can be exported.
+
+---
+
+## Modules in TypeScript
+
+In TypeScript, when you write the code, the **declarations, functions, etc. are set global**.
+
+### Example: Global Declarations
+
+Let’s practically see it.
+
+I have created a file `app.ts`, which has a `sum` function and a `subtraction` function.  
+Since both functions are declared in the same file, they are available in the same scope.
+
+When you run and compile with `tsc`, it works without any issue and generates the `app.js`.
+
+---
+
+## Modular Approach
+
+Now, let’s move towards a **modular approach**.
+
+1.  I’ll create another file called `calc.ts`.
+2.  Move the two functions (`sum` and `subtraction`) into this new file.
+3.  In `app.ts`, if I define another function (say, `multiplication`), it won’t be found in the scope because TypeScript treats everything as **global within a single project**.
+
+If I now try to compile, TypeScript will throw an error saying `multiplication` is not found.
+
+But once I add the function properly (just like `sum` and `subtraction`), the error is gone.
+
+This proves that **everything is global until we explicitly use `export`.**
+
+---
+
+## Using `export` in TypeScript
+
+The moment you use the `export` keyword, the functions stop being global.
+
+```ts
+// calc.ts
+export function sum(a: number, b: number): number {
+  return a + b;
+}
+
+export function subtraction(a: number, b: number): number {
+  return a - b;
+}
+
+export function multiplication(a: number, b: number): number {
+  return a * b;
+}
+```
+
+Now in `app.ts`, these functions are no longer available by default.  
+You must explicitly **import** them.
+
+```ts
+// app.ts
+import { sum, subtraction, multiplication } from "./calc";
+
+console.log(sum(10, 5));
+console.log(subtraction(10, 5));
+console.log(multiplication(10, 5));
+```
+
+✅ The errors are gone, and TypeScript compiles without issues.
+
+---
+
+## Module Loaders in TypeScript
+
+If you check the generated JavaScript file, you’ll notice something:  
+Instead of `export`, TypeScript generates **`exports`**.
+
+Why?  
+Because by default, the **module loader** in TypeScript is **CommonJS** (Node.js style).
+
+If you open the `tsconfig.json`, you’ll see something like this:
+
+```json
+"module": "commonjs"
+```
+
+But you’re not restricted to only CommonJS. You can choose the module loader while compiling:
+
+```sh
+tsc --module commonjs app.ts
+tsc --module es2020 app.ts
+```
+
+- Using **CommonJS** → generates Node.js-style code.
+- Using **ES2020** → generates modern ES module syntax (`import` / `export`).
+
+The **module loader** is the key to performing `import` and `export` at runtime. It ensures that all dependencies are correctly loaded from their paths.
+
+---
+
+## Summary
+
+- By default, **everything in TypeScript is global** until you use `export`.
+- Use **`export` and `import`** to make code modular and reusable.
+- TypeScript supports different **module loaders** (`commonjs`, `es2020`, etc.).
+- The **module loader** decides how `import` and `export` will be compiled into JavaScript.
+
+This is how you can deal with **modules in TypeScript** and control how your project is structured and executed.
+
+---
+
+# 77
+
+---
+
+# Mastering TypeScript: Understanding Namespaces
+
+In this section, I'm discussing about **TypeScript namespaces**.
+
+There will be three relative questions:
+
+1.  What is namespace and explain its syntax?
+2.  How do you compile multiple namespaces in a single file?
+3.  Explain the syntax of managing nested namespaces.
+
+---
+
+## What is a TypeScript Namespace?
+
+TypeScript namespace is even better grouping of **classes, interfaces, functions and other declarations**.
+
+We used to create object literals to have namespace-like feeling in JavaScript in the very early days.  
+But **namespace certainly is a good way** to handle a group of related functionalities together.
+
+---
+
+## Syntax of Namespace
+
+Let’s understand the syntax first.
+
+I’ll continue with the same code we changed in the previous lecture of module.  
+So we have this code.
+
+Now I’m going to remove import statement from this place.  
+The moment I remove, I’m certainly going to face those errors again.  
+But that is fine for the moment.
+
+When you are defining a function and if you want to use the namespace, all the entities of namespace you have to **export using the export statement**.
+
+Let’s say I want to make a logical grouping of these three functions called calculator (Calc).  
+So I’m going to create a namespace:
+
+```ts
+namespace Calc {
+  export function add(a: number, b: number): number {
+    return a + b;
+  }
+
+  export function subtract(a: number, b: number): number {
+    return a - b;
+  }
+
+  export function multiply(a: number, b: number): number {
+    return a * b;
+  }
+}
+```
+
+So now I have defined the namespace, which is a logical grouping of various methods.  
+You may have classes, interfaces, even a simple variable can be part of a namespace.
+
+👉 The important thing is that you have to **export it**.
+
+---
+
+## Using a Namespace
+
+Once you are done with this, I’m going to show the generated JavaScript code also to explain that when you put a namespace, it is going to actually put everything inside a function so the **global scope is avoided**.
+
+To use the namespace, you begin with **three-slash syntax**:
+
+```ts
+/// <reference path="calc.ts" />
+```
+
+Now you have the container named `Calc`.  
+So you call methods like this:
+
+```ts
+console.log(Calc.add(10, 5)); // 15
+console.log(Calc.subtract(10, 5)); // 5
+```
+
+Now as you can see, it started suggesting the various methods defined in the namespace.
+
+---
+
+## Compiling Namespaces
+
+Let me also compile the code.
+
+```bash
+tsc
+```
+
+As you can see here, we have the **IIFE (Immediately Invoked Function Expression)** defined for the entire code.  
+By defining namespace, we are actually making sure that these declarations or these functions are **not going global anyway**.
+
+This is the advantage of having namespace here.
+
+This is just one namespace.  
+You can have **multiple namespaces across various files**, and you also have a choice to combine all the namespaces in a single file.
+
+---
+
+## Multiple Namespaces Example
+
+I’ll add another file `other.ts`:
+
+```ts
+namespace Other {
+  export function test() {
+    console.log("Hi");
+  }
+}
+```
+
+Now, if you want to compile both namespaces (`Calc` and `Other`) into a single file:
+
+```bash
+tsc --outfile calc.js calc.ts other.ts
+```
+
+Now if I see `calc.js`, then we have two IIFEs:
+
+- One is for the `Calc` namespace
+- Second is for the `Other` namespace
+
+---
+
+## Nested Namespaces
+
+You may also have a situation where you want to define **nested namespaces**.  
+That also is possible with this syntax:
+
+```ts
+namespace First {
+  export namespace Second {
+    export namespace Third {
+      export function greet() {
+        console.log("Hello from nested namespace!");
+      }
+    }
+  }
+}
+
+// usage
+First.Second.Third.greet();
+```
+
+---
+
+## Relative Questions
+
+### 1\. What is namespace and explain its syntax?
+
+Namespace is basically the **logical grouping** of various classes, interfaces, functions, or other declarations.  
+It ensures that TypeScript doesn’t make everything global.
+
+**Syntax:**
+
+```ts
+namespace MyNamespace {
+  export function sayHello() {
+    console.log("Hello!");
+  }
+}
+```
+
+---
+
+### 2\. How do you compile multiple namespaces in a single file?
+
+You use the `--outfile` flag:
+
+```bash
+tsc --outfile output.js file1.ts file2.ts
+```
+
+This merges all the namespaces into a single compiled JavaScript file.
+
+---
+
+### 3\. Explain the syntax of managing nested namespaces.
+
+In case of nested namespaces, you use the **export keyword with each namespace**:
+
+```ts
+namespace Outer {
+  export namespace Inner {
+    export function show() {
+      console.log("Nested namespace example");
+    }
+  }
+}
+```
+
+Usage:
+
+```ts
+Outer.Inner.show();
+```
+
+---
+
+✅ That’s how namespaces work in TypeScript!
+
+---
+
+# 78
+
+---
+
+# Mastering TypeScript Decorators: An Introduction
+
+In this section, we are starting a new and very interesting topic: **Decorators** in TypeScript.
+
+Before we dive deeper into this concept, let’s first break it down into easier terms and basic syntax.
+
+---
+
+## What is a Decorator?
+
+A **decorator** is essentially a **function**.  
+It’s a **metaprogramming technique**.
+
+Now, what exactly is **metaprogramming**?  
+A metaprogram controls the behavior of other programs.
+
+For example:
+
+```ts
+@myDecorator
+class Test {
+  // Class logic here
+}
+```
+
+Here, `@myDecorator` changes the behavior of the `Test` class.
+
+As per the name, a decorator **adds some functionality**. That is, it _decorates_ a **class, method, property, or parameter**.
+
+---
+
+## Syntax of a Decorator
+
+A decorator is a **function beginning with the `@` sign**.
+
+For example:
+
+```ts
+function myDecorator(constructor: Function) {
+  console.log("Decorator invoked");
+}
+
+@myDecorator
+class Test {}
+```
+
+Here:
+
+- The decorator `@myDecorator` is placed on top of the class `Test`.
+- The decorator is invoked when the class is executed **at runtime**.
+
+---
+
+## Enabling Decorators in TypeScript
+
+Since decorators were introduced in **ES7**, we have to **turn on the experimental decorators option** in TypeScript to use them.
+
+There are two ways to do this:
+
+### 1\. Enable in `tsconfig.json`
+
+Go to the config file and set:
+
+```json
+"experimentalDecorators": true
+```
+
+### 2\. Enable via CLI
+
+You can enable it using the TypeScript compiler:
+
+```bash
+tsc --target ES5 --experimentalDecorators
+```
+
+This will also allow you to work with decorators.
+
+---
+
+## Current State of Decorators
+
+Decorators are a **proposed feature** in JavaScript, but some frameworks like **Angular** have already implemented them extensively.
+
+TypeScript also supports decorators, but it’s still considered to be in the **early stage**.
+
+---
+
+## Types of Decorators
+
+There are several types of decorators we can implement in TypeScript:
+
+- **Class Decorators**
+- **Method Decorators**
+- **Property Decorators**
+- **Parameter Decorators**
+
+👉 We will explore each of them step by step.
+
+---
+
+## What’s Next?
+
+We’ll begin with **Class Decorators** in the next section.
+
+---
+
+# 79
+
+---
+
+# Mastering TypeScript Decorators: Class Decorators
+
+In the previous lecture, we introduced decorators in TypeScript. Now, let’s dive into **class decorators**.  
+There will also be two related questions you’ll likely face in interviews around this topic.
+
+---
+
+## Defining a Class Decorator
+
+Let’s start by defining a simple class:
+
+```ts
+class Vehicle {
+  model: string;
+
+  constructor(m: string) {
+    this.model = m;
+    console.log("Constructor called");
+  }
+}
+```
+
+Now, I want to define a decorator for this class. As we learned earlier, a decorator is a **simple JavaScript function**.
+
+```ts
+function controlVehicle(constructor: Function) {
+  console.log("Decorator called");
+}
+```
+
+As per the syntax, I’ll put the decorator `controlVehicle` on top of the class `Vehicle` with the `@` sign:
+
+```ts
+@controlVehicle
+class Vehicle {
+  model: string;
+
+  constructor(m: string) {
+    this.model = m;
+    console.log("Constructor called");
+  }
+}
+```
+
+---
+
+## Why the Parameter is a Function?
+
+When applying this decorator, TypeScript expects **arguments depending on what you apply the decorator to**.
+
+Here, since the decorator is applied on a class, it takes one parameter — the **class constructor**.  
+This is why we declare the argument type as `Function`.
+
+👉 Remember: **A class is just syntactic sugar. Under the hood, a class in JavaScript is nothing but a constructor function.**
+
+---
+
+## Running the Code
+
+If you try this code in VS Code, make sure the `experimentalDecorators` option is enabled in your **tsconfig.json**.  
+In the Playground, this option is already set to `true`.
+
+When we run the code without instantiating the class:
+
+```ts
+@controlVehicle
+class Vehicle {
+  model: string;
+
+  constructor(m: string) {
+    this.model = m;
+    console.log("Constructor called");
+  }
+}
+```
+
+The output is:
+
+```sql
+Decorator called
+```
+
+Notice that we did not create an object of the class — still, the decorator runs when the **class code is executed**.
+
+---
+
+## Passing the Constructor
+
+Let’s extend this by logging the constructor and creating an object:
+
+```ts
+function controlVehicle(constructor: Function) {
+  console.log("Decorator called");
+  console.log(constructor);
+}
+
+@controlVehicle
+class Vehicle {
+  model: string;
+
+  constructor(m: string) {
+    this.model = m;
+    console.log("Constructor called");
+  }
+}
+
+const vehicle = new Vehicle("1001");
+```
+
+**Output:**
+
+```kotlin
+Decorator called
+[class Vehicle code...]
+Constructor called
+```
+
+As you can see, the **entire class constructor** is passed to the decorator function, and the constructor log appears when we create the object.
+
+---
+
+## Example from TypeScript Docs
+
+The official TypeScript documentation shows another powerful example:  
+we can use `Object.seal()` to lock down the class so it **cannot be subclassed** at runtime.
+
+```ts
+function controlVehicle(constructor: Function) {
+  Object.seal(constructor);
+  Object.seal(constructor.prototype);
+}
+```
+
+By sealing both the constructor and its prototype, the `Vehicle` class becomes **non-extensible**.
+
+---
+
+## Related Interview Questions
+
+**Q1. How will you define decorators for a class?**  
+You define the decorator as a function and apply it with `@` on top of the class.  
+Since a class decorator receives the class constructor, the function will always take one parameter of type `Function`.
+
+**Q2. Explain parameters passed to the decorator function when it’s applied to the class.**  
+When a decorator is applied to a class, only one parameter is passed — the **class constructor itself**.  
+For methods, properties, or parameters, the decorator parameters differ, but in the case of a class, it’s always the constructor.
+
+---
+
+## Final Thoughts
+
+Class decorators allow us to add functionality or constraints at the **class level**.  
+They are invoked when the class is executed, not when objects are instantiated, making them a powerful tool in TypeScript’s metaprogramming model.
+
+---
+
+# 80
+
+---
+
+# Mastering Method Decorators in TypeScript
+
+In this section, we’re diving into **method decorators** in TypeScript. You’ll also see three relative questions around this topic to strengthen your understanding.
+
+We’ve already seen how decorators work in general. Now, let’s explore **how to practically use method decorators** in real scenarios.
+
+---
+
+## What is a Method Decorator?
+
+A **method decorator** is used to decorate methods of a class.
+
+- These methods can be either **static methods** or **instance methods**.
+- The decorator function for a method receives **three arguments**:
+
+```ts
+function methodDecorator(
+  target: Object,
+  name: string,
+  descriptor: PropertyDescriptor
+) {
+  // logic here
+}
+```
+
+- **target** → Reference of class prototype (if instance member) or class itself (if static member).
+- **name** → The name of the member (method).
+- **descriptor** → A **PropertyDescriptor** object containing details about the method.
+
+A `PropertyDescriptor` looks like this:
+
+```ts
+interface PropertyDescriptor {
+  configurable?: boolean;
+  enumerable?: boolean;
+  value?: any;
+  writable?: boolean;
+  get?(): any;
+  set?(v: any): void;
+}
+```
+
+---
+
+## Example: Creating a Simple Method Decorator
+
+Let’s build a simple example to understand.
+
+```ts
+function decoratorData(
+  target: Object,
+  name: string,
+  descriptor: PropertyDescriptor
+) {
+  console.log("Target:", target);
+  console.log("Method Name:", name);
+  console.log("Descriptor:", descriptor);
+  console.log("Descriptor Value:", descriptor.value);
+}
+
+class Vehicle {
+  model: number;
+
+  constructor(m: number) {
+    this.model = m;
+  }
+
+  @decoratorData
+  getData() {
+    console.log(this.model);
+  }
+}
+
+const vehicle = new Vehicle(1001);
+vehicle.getData();
+```
+
+### Output:
+
+- `target` → Reference of the class
+- `name` → `"getData"`
+- `descriptor` → Shows method’s property settings (`enumerable`, `writable`, `configurable`, etc.)
+- `descriptor.value` → Points to the method itself
+
+This shows that we can even **modify the method’s definition** via a decorator!
+
+---
+
+## Changing Method Definition with a Decorator
+
+Now let’s override the method completely.
+
+```ts
+function decoratorData(
+  target: Object,
+  name: string,
+  descriptor: PropertyDescriptor
+) {
+  descriptor.value = function () {
+    console.log("🚀 A new function executed!");
+  };
+}
+
+class Vehicle {
+  model: number;
+
+  constructor(m: number) {
+    this.model = m;
+  }
+
+  @decoratorData
+  getData() {
+    console.log(this.model);
+  }
+}
+
+const vehicle = new Vehicle(1001);
+vehicle.getData(); // Output: "🚀 A new function executed!"
+```
+
+Originally, `getData()` was supposed to print the model number. But with the decorator, its entire behavior is changed!
+
+---
+
+## Relative Questions Around Method Decorators
+
+Now, let’s address three related questions to deepen understanding.
+
+---
+
+### 1\. **Make a Method Enumerable with a Decorator**
+
+By default, methods are not enumerable. But with a decorator, we can change that.
+
+```ts
+function decoratorEnum(
+  target: Object,
+  name: string,
+  descriptor: PropertyDescriptor
+) {
+  descriptor.enumerable = true;
+}
+
+class Vehicle {
+  model: number;
+
+  constructor(m: number) {
+    this.model = m;
+  }
+
+  @decoratorEnum
+  getData() {
+    console.log(this.model);
+  }
+}
+
+const vehicle = new Vehicle(2002);
+
+for (let member in vehicle) {
+  console.log(member);
+}
+```
+
+**Output:**
+
+```nginx
+model
+getData
+```
+
+Because of the decorator, `getData` becomes enumerable and appears in the loop.
+
+---
+
+### 2\. **Explain Parameters of Method Decorator Function**
+
+Recap:
+
+- **target** → Reference of class prototype (for instance methods) or class itself (for static methods).
+- **name** → The method’s name.
+- **descriptor** → A property descriptor object containing method metadata (`enumerable`, `writable`, `configurable`, `value`).
+
+This structure allows decorators to **modify metadata** or even **redefine the method** itself.
+
+---
+
+### 3\. **Change Method Definition Using a Decorator**
+
+We already demonstrated this in the earlier example:
+
+```ts
+descriptor.value = function () {
+  console.log("New function executed!");
+};
+```
+
+This overrides the method completely, giving it a new behavior.
+
+---
+
+## Summary
+
+- A **method decorator** can decorate both **static and instance methods**.
+- It receives **three parameters**: `target`, `name`, and `descriptor`.
+- You can use it to:
+
+  - Log method metadata
+  - Change method definition
+  - Control method’s enumerability
+  - Work with advanced use cases like logging, validation, access control, etc.
+
+Decorators are a powerful **metaprogramming technique** that let you modify behavior at runtime.
+
+---
+
+✨ In the next section, we’ll explore **accessor decorators** and see how they help with **getters and setters**.
+
+---
+
+# 81
+
+---
+
+# Accessor Decorators in TypeScript
+
+In this lecture, we are discussing **what is accessor decorators?**
+
+This itself is a common interview question. Because you have already seen method decorators, it will be really easy to understand accessor decorators.
+
+---
+
+## What are Accessors?
+
+Accessors in a class are **getter and setter methods** — the methods beginning with `get` and `set` keywords.
+
+---
+
+## Example: Creating a Getter and Setter
+
+Let’s create an example where we define a class `Vehicle`.
+
+```ts
+class Vehicle {
+  model: number = 0;
+
+  constructor(m: number) {
+    this.model = m;
+    console.log("Constructor called");
+  }
+
+  get modelNumber(): number {
+    return this.model;
+  }
+
+  set modelNumber(value: number) {
+    this.model = value;
+  }
+}
+
+const vehicle = new Vehicle(90);
+console.log(vehicle.modelNumber); // Executes the getter
+```
+
+- Initially, the model is defined as **0**.
+- When we assign a new value, the setter is executed.
+- When we log `vehicle.modelNumber`, it calls the getter method.
+
+The output will be:
+
+```
+90
+```
+
+---
+
+## Adding an Accessor Decorator
+
+Now, let’s add an **accessor decorator**.
+
+We will use the `@` sign and define a decorator named `AccessorDecorator`.
+
+```ts
+function AccessorDecorator(
+  target: any,
+  name: string,
+  descriptor: PropertyDescriptor
+) {
+  console.log("Descriptor:", descriptor);
+}
+
+class Vehicle {
+  private model: number = 0;
+
+  constructor(m: number) {
+    this.model = m;
+  }
+
+  @AccessorDecorator
+  get modelNumber(): number {
+    return this.model;
+  }
+
+  set modelNumber(value: number) {
+    this.model = value;
+  }
+}
+```
+
+When you run this, you will see that the descriptor includes **both getter and setter methods**.
+
+---
+
+## Tweaking with the Decorator
+
+Now, let’s modify the getter inside the decorator.
+
+```ts
+function AccessorDecorator(
+  target: any,
+  name: string,
+  descriptor: PropertyDescriptor
+) {
+  descriptor.get = function () {
+    console.log("Inside modified getter, this refers to:", this);
+    return "M" + this.model;
+  };
+}
+```
+
+### Key Observations:
+
+- The value of `this` still refers to the **class instance**, not the global scope.
+- This means decorators can override or extend getter/setter behavior.
+
+When we run:
+
+```ts
+const vehicle = new Vehicle(90);
+console.log(vehicle.modelNumber);
+```
+
+The output will be:
+
+```css
+Inside modified getter, this refers to: Vehicle { model: 90 }
+M90
+```
+
+---
+
+## Why is this Important?
+
+- **Accessor decorators** are very similar to method decorators.
+- The only difference is that they are applied to **getter and setter methods** instead of normal methods.
+- They give you powerful control over how class properties are accessed or mutated.
+
+👉 Remember: You can apply the decorator to **either the getter or the setter**, but it will still affect the property.
+
+---
+
+## Summary
+
+- Accessors = `get` and `set` methods in a class.
+- Accessor decorators work the same way as method decorators.
+- The **descriptor** for accessors includes both getter and setter definitions.
+- Decorators can **modify** accessors (e.g., prefixing values, adding logs, restricting updates).
+
+---
+
+✅ That’s the basic idea of **Accessor Decorators** in TypeScript.
+
+---
+
+# 82
+
+---
+
+# Decorator Factory and Chaining in TypeScript
+
+In this lecture, I’m discussing the concept of **decorator factory and chaining**.
+
+There will be four relative questions around this topic, which we’ll explore after understanding the fundamentals.
+
+---
+
+## What is a Decorator Factory?
+
+A **decorator factory** is nothing but a function which returns a decorator.  
+That is, it returns the decorator function itself.
+
+For example, you can write a function that acts as a factory. Inside this function, you can define a class/method/property decorator, and then return it.
+
+The beauty of decorator factories is that **you can pass parameters** to them, making them much more powerful and customizable than simple decorators.
+
+In real-world programming, factories are used more often because they allow more flexibility.
+
+---
+
+## Example: Class Label Decorator Factory
+
+Let’s try it practically.
+
+```ts
+function label(label: string) {
+  return function (constructor: Function) {
+    console.log(label);
+  };
+}
+
+@classDecorator("Label 1.0")
+class Vehicle {
+  model: number = 0;
+  vehicleType: string = "SUV";
+}
+```
+
+Here, `label` is a decorator factory that takes one parameter and returns a decorator.  
+When applied to the `Vehicle` class, the factory logs the provided label.
+
+---
+
+## Customizing with Decorator Factory
+
+Instead of just logging, let’s **add a property** to the class dynamically.
+
+```ts
+function label(label: string) {
+  return function (constructor: Function) {
+    (constructor as any).label = label;
+  };
+}
+
+@label("Label 1.0")
+class Vehicle {
+  model: number = 0;
+  vehicleType: string = "SUV";
+}
+
+console.log((Vehicle as any).label);
+```
+
+👉 As you can see, the property value is now attached to the class, and we can directly access it.
+
+This is the real advantage of using factories — **customization**.
+
+---
+
+## Chaining Multiple Decorators
+
+It’s also possible to apply multiple decorators on a class, method, accessor, property, or parameter.  
+This process is called **chaining** or simply applying multiple decorators.
+
+### Syntax:
+
+```ts
+@Decorator1
+@Decorator2
+class Example {}
+```
+
+Or equivalently:
+
+```ts
+@Decorator1
+@Decorator2
+class Example {}
+```
+
+---
+
+## Example: Multiple Decorators
+
+```ts
+function decoratorOne(constructor: Function) {
+  console.log("Decorator One", constructor);
+}
+
+function decoratorTwo(constructor: Function) {
+  console.log("Decorator Two", constructor);
+}
+
+@decoratorOne
+@decoratorTwo
+class Vehicle {}
+```
+
+### Output:
+
+```sql
+Decorator Two ...
+Decorator One ...
+```
+
+👉 Notice that while decorators are **applied top-to-bottom**, they are **executed bottom-to-top**.
+
+---
+
+## Interview Questions on Decorator Factory & Chaining
+
+1.  **What is a decorator factory?**
+
+    - A function that returns a decorator function.
+    - Useful because you can pass parameters and customize behavior.
+
+2.  **How can you chain decorators?**
+
+    - By applying multiple decorators on the same entity.
+    - Either stacked (`@Decorator1 @Decorator2`) or on separate lines.
+
+3.  **What is the difference between simple decorators and factories?**
+
+    - Simple decorators don’t take parameters.
+    - Factories allow arguments, making them flexible.
+
+4.  **What is the execution order when multiple decorators are applied?**
+
+    - **Applied:** Top → Bottom / Left → Right
+    - **Executed:** Bottom → Top / Right → Left
+
+---
+
+## Conclusion
+
+- **Decorator factories** are widely used because they allow parameterization and better customization.
+- **Chaining decorators** lets you apply multiple behaviors on the same entity.
+- Always remember: application is **top-to-bottom**, execution is **bottom-to-top**.
+
+---
+
+# 83
+
+---
+
+# Understanding Property Decorators in TypeScript
+
+Now let's discuss **property decorators**.
+
+And there will be two relative questions to consider:
+
+1.  The way we can decorate **static or instance methods**,
+2.  It is also possible to do the same with **static and instance properties**.
+
+---
+
+## What is a Property Decorator?
+
+In case of a **property decorator**, the decorator function will look like this:
+
+- It will have a **target**
+- And the **name (property key)**
+
+---
+
+## Syntax of Property Decorator
+
+Let’s look at the syntax with an example.
+
+```ts
+class Vehicle {
+  model = 0;
+  vType: string = "Car";
+}
+
+const vehicle = new Vehicle();
+
+function propDecorator(target: any, name: string) {
+  console.log("Target:", target);
+  console.log("Property Key:", name);
+}
+
+class Vehicle {
+  @propDecorator
+  model = 0;
+
+  @propDecorator
+  vType: string = "Car";
+}
+```
+
+When we run the code, the decorator executes **twice** (once for each property).
+
+✅ It simply displays the property names.
+
+---
+
+## Key Point: No Descriptor in Property Decorator
+
+Unlike method decorators, **property decorators do not have a descriptor**.
+
+👉 This is because the property is generated only when the **instance** is created.
+
+At the time of writing this, TypeScript does not have a built-in mechanism to decorate a class field with descriptors.
+
+But we can work around this using **`Object.defineProperty`**.
+
+---
+
+## Adding Functionality: Prefix Property Decorator
+
+Now let’s try to add a **prefix automatically** whenever a property is assigned.
+
+We’ll implement this using a **decorator factory**.
+
+### Step 1 – Create a Class
+
+```ts
+class Vehicle {
+  code: string = "";
+}
+
+const v = new Vehicle();
+v.code = "1002";
+
+console.log(v.code);
+```
+
+At this point, the output is just `1002`.  
+But we want a prefix added automatically — for example: `SUV-1002`.
+
+---
+
+### Step 2 – Create a Property Decorator Factory
+
+```ts
+function Prefix(p: string) {
+  return function (target: any, propertyKey: string | symbol) {
+    let value: string;
+
+    const getter = function () {
+      return p + value;
+    };
+
+    const setter = function (newVal: string) {
+      value = newVal;
+    };
+
+    const descriptor = {
+      get: getter,
+      set: setter,
+    };
+
+    Object.defineProperty(target, propertyKey, descriptor);
+  };
+}
+```
+
+---
+
+### Step 3 – Apply the Decorator
+
+```ts
+class Vehicle {
+  @Prefix("SUV-")
+  code: string = "";
+}
+
+const v = new Vehicle();
+v.code = "1002";
+
+console.log(v.code);
+// Output: SUV-1002
+```
+
+---
+
+## Crucial Part
+
+The **`Object.defineProperty`** method is the key here.
+
+- First argument → the class reference (`target`)
+- Second argument → the property key (`propertyKey`)
+- Third argument → the **descriptor object** (with `get` and `set`)
+
+This enables us to **intercept property access** and apply customization.
+
+---
+
+## Why is This Useful?
+
+By using a property decorator factory, you can:
+
+- Add prefixes (as we saw)
+- Convert values to **uppercase/lowercase**
+- Restrict **number of characters**
+- Perform **validation checks**
+
+In short, you can control and enhance how property values are stored and retrieved.
+
+---
+
+## Interview-Style Questions
+
+1.  **Explain property decorator with syntax.**  
+    → A property decorator is a function that takes two arguments:
+
+    - `target`: the class prototype
+    - `propertyKey`: the name of the property
+
+2.  **Create a property decorator factory which adds a given prefix to the property value.**  
+    → This is what we implemented using the `Prefix` factory.
+
+---
+
+🎯 **Conclusion:**  
+Property decorators give you the power to intercept and extend property behavior. Even though TypeScript doesn’t natively provide descriptors for properties, with `Object.defineProperty` we can still achieve advanced customizations.
+
+---
+
+# 84
+
+---
+
+# Mastering TypeScript Decorators: Parameter Decorator Explained
+
+In this section, we will discuss **parameter decorators** in TypeScript, their syntax, purpose, and how they can be implemented with practical examples.
+
+---
+
+## What is a Parameter Decorator?
+
+A **parameter decorator** is used to decorate **constructor parameters** or **class method parameters**.
+
+The decorator function of a parameter receives **three arguments**:
+
+1.  The constructor (target).
+2.  The parameter name (or property key).
+3.  The **ordinal index** of the parameter defined in the method.
+
+Unlike method or accessor decorators, **parameter decorators do not receive or return descriptors**.  
+They are mainly used to **collect or store parameter-related metadata**.
+
+---
+
+## Syntax of a Parameter Decorator
+
+The function looks like this:
+
+```ts
+function ParamDecorator(
+  target: Object,
+  propertyKey: string | symbol,
+  parameterIndex: number
+) {
+  console.log("Target:", target);
+  console.log("Property:", propertyKey);
+  console.log("Parameter Index:", parameterIndex);
+}
+```
+
+---
+
+## Example: Using Parameter Decorators
+
+Let us see the syntax in action with a simple **Vehicle class**:
+
+```ts
+class Vehicle {
+  model: number = 0;
+
+  constructor(@ParamDecorator m: number) {
+    this.model = m;
+  }
+
+  display(@ParamDecorator p: string) {
+    console.log("Value of P:", p);
+  }
+}
+```
+
+### Explanation:
+
+1.  We created a `Vehicle` class with a property `model`.
+2.  The constructor accepts a parameter `m`.
+3.  The method `display` accepts a parameter `p`.
+4.  Both parameters are decorated with `@ParamDecorator`.
+
+---
+
+## Defining the Decorator
+
+```ts
+function ParamDecorator(
+  target: Object,
+  propertyKey: string | symbol,
+  parameterIndex: number
+) {
+  console.log("Target:", target);
+  console.log("Property Key:", propertyKey);
+  console.log("Parameter Index:", parameterIndex);
+}
+```
+
+When executed, it will display the target object, method name (if applicable), and the parameter index.
+
+---
+
+## Execution Order
+
+Just like with other decorators, **parameter decorators are executed from bottom to top** when applied in chaining.
+
+That means:
+
+- First, the decorator runs for the **method parameter**.
+- Then, it runs for the **constructor parameter**.
+
+---
+
+## Extending with a Factory
+
+Using a **decorator factory**, you can further **customize the behavior of parameters**—just as we did with property decorators.
+
+For example, you could enforce validation rules, transform inputs, or record metadata about parameters to be used later.
+
+---
+
+## Interview Question
+
+**Q: What is a parameter decorator in TypeScript? Explain with syntax and example.**
+
+✅ **Answer:**
+
+- A parameter decorator is used to decorate constructor or method parameters.
+- It receives three arguments: target (constructor), property key (method/constructor name), and parameter index.
+- It does not return a descriptor but is useful for storing metadata.
+- Example:
+
+```ts
+function ParamDecorator(
+  target: Object,
+  propertyKey: string | symbol,
+  parameterIndex: number
+) {
+  console.log(target, propertyKey, parameterIndex);
+}
+```
+
+---
+
+🎯 With this understanding, you can now use **parameter decorators** to implement metadata-driven programming, validations, and powerful abstractions in TypeScript.
+
+---
